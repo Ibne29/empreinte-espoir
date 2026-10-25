@@ -19,9 +19,10 @@ Double-cliquer sur `index.html`, ou lancer `python3 -m http.server` dans ce doss
 ## Mettre à jour le contenu
 
 - **Textes, valeurs, zones, équipe, contacts** : sections correspondantes de `data.js`.
+- **Éléments animés de l'accueil** : `motsHero` (mots qui défilent dans le grand titre), `domaines`, `etapes` (« Comment ça marche ») et `citations` (proverbes qui défilent). Les bandeaux qui défilent reprennent automatiquement les valeurs et les domaines.
 - **Nouveau projet** : copier un bloc `{ ... }` dans `projetsFuturs` et changer les valeurs (`id` unique, sans espace ni accent).
-- **Projet terminé** : le retirer de `projetsFuturs` et l'ajouter à `projetsRealises` avec ses dépenses et ses photos.
-- **Montant collecté** : modifier le champ `collecte` du projet. La barre d'avancement, les pourcentages et les totaux se recalculent seuls.
+- **Projet terminé** : le retirer de `projetsFuturs` et l'ajouter à `projetsRealises` (un modèle prêt à copier est en commentaire dans `data.js`). Tant que la liste est vide, la page Réalisations affiche « Nos premières réalisations arrivent bientôt ».
+- **Montant collecté** : modifier le champ `collecte` du projet. Les compteurs animés, les barres d'avancement, les pourcentages et les totaux se recalculent seuls.
 - **Photos** : les déposer dans `assets/img/projets/`, puis indiquer leur chemin, par exemple
   `photos: { avant: ["assets/img/projets/puits-avant.jpg"], pendant: [], apres: [] }`.
   Les réduire avant de les envoyer (environ 1600 px de large, moins de 300 Ko) : beaucoup de visiteurs consultent le site sur mobile avec peu de données.

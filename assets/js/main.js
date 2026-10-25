@@ -1,8 +1,10 @@
-/* Rendu du site à partir de assets/js/data.js — pas besoin de modifier ce fichier. */
+/* Rendu et animations du site à partir de assets/js/data.js — pas besoin de modifier ce fichier. */
 (function () {
   "use strict";
   const S = window.SITE;
   const page = document.body.dataset.page;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const behavior = reduceMotion ? "auto" : "smooth";
 
   // ---------- Utilitaires ----------
   const esc = (v) =>
@@ -11,10 +13,11 @@
   const money = (n) =>
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: S.devise, maximumFractionDigits: 0 }).format(n || 0);
 
-  const num = (n) => new Intl.NumberFormat("fr-FR").format(n || 0);
+  const num = (n) => new Intl.NumberFormat("fr-FR").format(Math.round(n || 0));
   const pct = (a, b) => (b > 0 ? Math.min(100, Math.round((a / b) * 100)) : 0);
   const sum = (arr, f) => arr.reduce((t, x) => t + (f(x) || 0), 0);
-  const $ = (sel) => document.querySelector(sel);
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const fill = (sel, html) => { const el = $(sel); if (el) el.innerHTML = html; };
 
   const ICONS = {
@@ -23,6 +26,14 @@
     heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',
     leaf: '<path d="M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z"/><path d="M4 21c3-5 6-8 11-11"/>',
     target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    drop: '<path d="M12 2.7s-6.5 7.1-6.5 11.8a6.5 6.5 0 0 0 13 0C18.5 9.8 12 2.7 12 2.7z"/><path d="M9 15a3 3 0 0 0 3 3"/>',
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+    health: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
+    bowl: '<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 7c0-1.5 1-2 1-3.5M12 7c0-1.5 1-2 1-3.5M16 7c0-1.5 1-2 1-3.5"/>',
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    tool: '<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 1.3-1.3a4 4 0 0 0-5-5L3 8l3-3 3 3 1.3-1.3a4 4 0 0 0 4.4-.4z"/>',
+    camera: '<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/>',
     pin: '<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
     users: '<circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20a7 7 0 0 0-4-6.3"/>',
     tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
@@ -32,9 +43,31 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+    left: '<path d="M15 18l-6-6 6-6"/>',
+    right: '<path d="M9 18l6-6-6-6"/>',
+    up: '<path d="M12 19V5M5 12l7-7 7 7"/>',
   };
   const icon = (name, cls = "icon") =>
-    `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+    `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.heart}</svg>`;
+
+  // Couleur et icône de l'illustration, déduites du type de projet
+  const THEMES = [
+    [/eau|forage|puits/i, "drop", "eau"],
+    [/duc|cole|scolaire/i, "book", "edu"],
+    [/sant|m[ée]dic|soin/i, "health", "sante"],
+    [/aliment|nourri|repas|denr/i, "bowl", "food"],
+  ];
+  const theme = (type) => {
+    const t = THEMES.find(([re]) => re.test(type || ""));
+    return t ? { icon: t[1], cls: t[2] } : { icon: "heart", cls: "default" };
+  };
+
+  // Photo du projet, ou illustration animée aux couleurs du projet
+  const visual = (src, alt, type, label = "") => {
+    if (src) return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`;
+    const t = theme(type);
+    return `<div class="ph ph-${t.cls}" role="img" aria-label="${esc(label || alt)}"><i></i><i></i>${icon(t.icon, "ph-icon")}${label ? `<span class="ph-label">${esc(label)}</span>` : ""}</div>`;
+  };
 
   const donLink = (p) => (p && p.lienDon) || S.dons.lienPrincipal || "cagnotte.html#moyens";
   const isExternal = (url) => /^https?:/.test(url);
@@ -43,34 +76,44 @@
     return `<a class="${cls}" href="${esc(url)}"${isExternal(url) ? ' target="_blank" rel="noopener"' : ""}>${label}</a>`;
   };
 
-  const photo = (src, alt, label = "Photo à venir") =>
-    src
-      ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`
-      : `<div class="ph" role="img" aria-label="${esc(label)}"><span>${esc(label)}</span></div>`;
+  // Compteur animé : la valeur s'affiche à 0 puis monte quand l'élément apparaît
+  const counter = (value, format = "num") =>
+    `<span data-count="${value || 0}" data-format="${format}">${format === "money" ? money(0) : format === "pct" ? "0%" : "0"}</span>`;
 
   const bar = (v) => `
       <div class="progress" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100" aria-label="Avancement de la collecte">
-        <span style="width:${v}%"></span>
+        <span style="--w:${v}%"></span>
       </div>`;
 
   const progress = (p) => {
     const v = pct(p.collecte, p.budget);
+    const sub = p.collecte > 0
+      ? `Objectif : ${money(p.budget)} · Reste : ${money(Math.max(0, p.budget - p.collecte))}`
+      : `Objectif : ${money(p.budget)} · <span class="first">Soyez le premier à donner !</span>`;
     return `
       ${bar(v)}
       <div class="progress-meta">
-        <span><strong>${money(p.collecte)}</strong> collectés</span>
-        <span class="pct">${v}%</span>
+        <span><strong>${counter(p.collecte, "money")}</strong> collectés</span>
+        <span class="pct">${counter(v, "pct")}</span>
       </div>
-      <div class="progress-sub">Objectif : ${money(p.budget)} · Reste : ${money(Math.max(0, p.budget - p.collecte))}</div>`;
+      <div class="progress-sub">${sub}</div>`;
   };
 
-  // ---------- En-tête et pied de page ----------
+  const statItems = (items) => items.map(([value, label, format], i) => `
+      <div class="stat" data-reveal style="--i:${i}"><strong>${counter(value, format)}</strong><span>${label}</span></div>`).join("");
+
+  // ---------- En-tête, pied de page, décors ----------
   const NAV = [
     ["index", "index.html", "L'association"],
     ["projets", "projets.html", "Futurs projets"],
     ["realisations", "realisations.html", "Réalisations"],
     ["cagnotte", "cagnotte.html", "Cagnotte"],
   ];
+
+  const AURORA = '<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>';
+  const WAVE_PATH = "M0 60C240 110 480 10 720 60S1200 10 1440 60S1920 10 2160 60S2640 10 2880 60V120H0Z";
+  const WAVE = `<div class="hero-wave" aria-hidden="true">${
+    `<svg viewBox="0 0 2880 120" preserveAspectRatio="none"><path d="${WAVE_PATH}"/></svg>`.repeat(2)}</div>`;
 
   function renderLayout() {
     const links = NAV.map(
@@ -81,7 +124,7 @@
       ? '<div class="demo-banner">Site en préparation — les projets et montants affichés sont des exemples.</div>'
       : "";
 
-    document.querySelector("[data-header]").outerHTML = `
+    $("[data-header]").outerHTML = `
       ${banner}
       <header class="site-header">
         <div class="container header-inner">
@@ -90,7 +133,7 @@
             <span><strong>${esc(S.nom)}</strong><small>Association</small></span>
           </a>
           <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">${icon("menu")}</button>
-          <nav id="nav" class="nav">${links}${donButton(null, "Faire un don", "btn btn-gold btn-sm")}</nav>
+          <nav id="nav" class="nav">${links}${donButton(null, "Faire un don", "btn btn-gold btn-sm btn-glow")}</nav>
         </div>
       </header>`;
 
@@ -106,7 +149,7 @@
       c.whatsapp && `<a href="https://wa.me/${esc(c.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>`,
     ].filter(Boolean).join("");
 
-    document.querySelector("[data-footer]").outerHTML = `
+    $("[data-footer]").outerHTML = `
       <footer class="site-footer" id="contact">
         <div class="container footer-grid">
           <div>
@@ -129,17 +172,212 @@
         <div class="container footer-bottom">© ${new Date().getFullYear()} ${esc(S.nom)} — Tous droits réservés</div>
       </footer>`;
 
+    document.body.insertAdjacentHTML("afterbegin", '<div class="scroll-progress" aria-hidden="true"><span></span></div>');
+    document.body.insertAdjacentHTML("beforeend", `<button class="to-top" aria-label="Remonter en haut de la page">${icon("up")}</button>`);
+    $$("[data-aurora]").forEach((el) => el.insertAdjacentHTML("afterbegin", AURORA));
+    $$(".hero").forEach((el) => el.insertAdjacentHTML("beforeend", WAVE));
+
     const toggle = $(".nav-toggle");
     const nav = $("#nav");
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
+    const setOpen = (open) => {
+      nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", open);
       toggle.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
       toggle.innerHTML = icon(open ? "close" : "menu");
+    };
+    toggle.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  }
+
+  function setupScroll() {
+    const header = $(".site-header");
+    const progressBar = $(".scroll-progress span");
+    const toTop = $(".to-top");
+    let ticking = false;
+    const update = () => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+      header.classList.toggle("is-scrolled", y > 10);
+      toTop.classList.toggle("is-visible", y > 600);
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior }));
+    update();
+  }
+
+  // ---------- Composants animés ----------
+  function setupRotator() {
+    const el = $("[data-rotator]");
+    const words = S.motsHero || [];
+    if (!el || !words.length) return;
+    el.innerHTML = words.map((w, i) => `<span${i === 0 ? ' class="is-active"' : ""}>${esc(w)}</span>`).join("");
+    fill("[data-rotator-sr]", esc(words.join(", ")));
+    if (reduceMotion || words.length < 2) return;
+    const spans = $$("span", el);
+    let i = 0;
+    setInterval(() => {
+      const prev = spans[i];
+      i = (i + 1) % spans.length;
+      prev.classList.replace("is-active", "is-leaving");
+      spans[i].classList.remove("is-leaving");
+      spans[i].classList.add("is-active");
+      setTimeout(() => prev.classList.remove("is-leaving"), 800);
+    }, 2800);
+  }
+
+  function setupMarquees() {
+    const sources = {
+      valeurs: S.valeurs.map((v) => [v.icone, v.nom]),
+      domaines: S.domaines.map((d) => [d.icone, d.nom]),
+    };
+    $$("[data-marquee]").forEach((track) => {
+      const items = sources[track.dataset.marquee] || [];
+      const group = items.map(([ic, label]) => `<span class="mq-item">${icon(ic)}${esc(label)}</span><span class="mq-sep">✦</span>`).join("");
+      // Deux moitiés identiques : l'animation glisse de -50 % pour boucler sans saut
+      track.innerHTML = group.repeat(4);
     });
   }
 
+  function setupCarousel(root) {
+    const track = $(".carousel-track", root);
+    const items = [...track.children];
+    if (!items.length) return;
+    root.insertAdjacentHTML("beforeend", `
+      <div class="carousel-nav">
+        <button class="car-btn" data-dir="-1" aria-label="Précédent">${icon("left")}</button>
+        <div class="car-dots">${items.map((_, i) => `<button aria-label="Aller à l'élément ${i + 1}"></button>`).join("")}</div>
+        <button class="car-btn" data-dir="1" aria-label="Suivant">${icon("right")}</button>
+      </div>`);
+    const dots = $$(".car-dots button", root);
+    const step = () => (items[1] ? items[1].offsetLeft - items[0].offsetLeft : track.clientWidth);
+    const visible = () => Math.max(1, Math.round((track.clientWidth + step() - items[0].offsetWidth) / step()));
+    const pages = () => Math.max(1, items.length - visible() + 1);
+    const current = () => Math.min(pages() - 1, Math.round(track.scrollLeft / step()));
+    const go = (i) => track.scrollTo({ left: ((i + pages()) % pages()) * step(), behavior });
+
+    const sync = () => {
+      const n = pages();
+      root.classList.toggle("is-static", n < 2);
+      dots.forEach((d, i) => {
+        d.hidden = i >= n;
+        if (i === current()) d.setAttribute("aria-current", "true");
+        else d.removeAttribute("aria-current");
+      });
+    };
+    let raf = 0;
+    track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(sync); }, { passive: true });
+    window.addEventListener("resize", sync);
+    $$(".car-btn", root).forEach((b) => b.addEventListener("click", () => go(current() + Number(b.dataset.dir))));
+    dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+    sync();
+
+    // Défilement automatique, en pause quand on survole ou touche le carrousel
+    let paused = false;
+    let resume = 0;
+    root.addEventListener("mouseenter", () => { paused = true; });
+    root.addEventListener("mouseleave", () => { paused = false; });
+    root.addEventListener("focusin", () => { paused = true; });
+    root.addEventListener("focusout", () => { paused = false; });
+    root.addEventListener("touchstart", () => {
+      paused = true;
+      clearTimeout(resume);
+      resume = setTimeout(() => { paused = false; }, 8000);
+    }, { passive: true });
+    if (!reduceMotion) {
+      setInterval(() => { if (!paused && !document.hidden && pages() > 1) go(current() + 1); }, 4500);
+    }
+  }
+
+  function setupQuotes() {
+    const root = $("[data-quotes]");
+    const list = S.citations || [];
+    if (!root || !list.length) return;
+    root.innerHTML = `
+      <div class="quotes-stage">${list.map((q, i) => `
+        <figure class="quote${i === 0 ? " is-active" : ""}">
+          <blockquote>« ${esc(q.texte)} »</blockquote>
+          ${q.traduction ? `<p class="quote-trad">${esc(q.traduction)}</p>` : ""}
+          <figcaption>${esc(q.source)}</figcaption>
+        </figure>`).join("")}
+      </div>
+      <div class="quote-dots">${list.map((_, i) => `<button aria-label="Citation ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("")}</div>`;
+    const quotes = $$(".quote", root);
+    const dots = $$(".quote-dots button", root);
+    let i = 0;
+    let paused = false;
+    const show = (n) => {
+      quotes[i].classList.remove("is-active");
+      dots[i].removeAttribute("aria-current");
+      i = (n + quotes.length) % quotes.length;
+      quotes[i].classList.add("is-active");
+      dots[i].setAttribute("aria-current", "true");
+    };
+    dots.forEach((d, n) => d.addEventListener("click", () => show(n)));
+    root.addEventListener("mouseenter", () => { paused = true; });
+    root.addEventListener("mouseleave", () => { paused = false; });
+    if (!reduceMotion && quotes.length > 1) {
+      setInterval(() => { if (!paused && !document.hidden) show(i + 1); }, 6000);
+    }
+  }
+
+  function countUp(el) {
+    const target = parseFloat(el.dataset.count) || 0;
+    const format = el.dataset.format;
+    const out = (v) => (format === "money" ? money(v) : format === "pct" ? `${Math.round(v)}%` : num(v));
+    if (reduceMotion || target === 0) { el.textContent = out(target); return; }
+    const start = performance.now();
+    const duration = 1800;
+    const tick = (now) => {
+      const k = Math.min(1, (now - start) / duration);
+      el.textContent = out(target * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Apparitions au défilement, compteurs, barres de progression
+  function animateOnScroll() {
+    const targets = $$("[data-reveal], [data-count], .progress, .steps");
+    const run = (el) => {
+      if (el.matches("[data-count]")) countUp(el);
+      if (el.matches(".progress")) el.classList.add("is-filled");
+      if (el.matches(".steps")) el.classList.add("is-drawn");
+      if (el.matches("[data-reveal]")) {
+        el.classList.add("is-visible");
+        // Une fois apparu, on retire l'attribut pour que les effets de survol n'héritent pas du délai
+        const done = (e) => {
+          if (e.target !== el) return;
+          el.removeAttribute("data-reveal");
+          el.removeEventListener("transitionend", done);
+        };
+        el.addEventListener("transitionend", done);
+      }
+    };
+    if (!("IntersectionObserver" in window)) { targets.forEach(run); return; }
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
+    }), { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+    targets.forEach((el) => io.observe(el));
+  }
+
   // ---------- Page : l'association ----------
+  function projectCard(p) {
+    return `
+      <article class="card project-card">
+        <div class="card-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
+        <div class="card-body">
+          <h3>${esc(p.titre)}</h3>
+          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}</p>
+          ${progress(p)}
+          <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
+        </div>
+      </article>`;
+  }
+
   function renderHome() {
     const realises = S.projetsRealises;
     const futurs = S.projetsFuturs;
@@ -147,67 +385,81 @@
     fill("[data-qui]", esc(S.presentation.quiSommesNous));
     fill("[data-mission]", esc(S.presentation.mission));
     fill("[data-organisation]", esc(S.presentation.organisation));
+    setupRotator();
 
-    fill("[data-stats]", [
+    fill("[data-hero-chips]", S.domaines.slice(0, 3).map((d, i) =>
+      `<div class="float-chip c${i + 1}">${icon(d.icone)}<span>${esc(d.nom)}</span></div>`).join(""));
+
+    fill("[data-stats]", statItems([
       [realises.length, "projets réalisés"],
-      [num(sum(realises, (p) => p.beneficiaires)), "bénéficiaires aidés"],
+      [sum(realises, (p) => p.beneficiaires), "bénéficiaires aidés"],
       [futurs.length, "projets en préparation"],
       [S.zones.length, "pays d'intervention"],
-    ].map(([v, l]) => `<div class="stat"><strong>${v}</strong><span>${l}</span></div>`).join(""));
+    ]));
 
-    fill("[data-valeurs]", S.valeurs.map((v) => `
-      <article class="value-card">
+    fill("[data-domaines]", S.domaines.map((d, i) => `
+      <article class="domain-card" data-reveal style="--i:${i}">
+        <div class="domain-icon">${icon(d.icone)}</div>
+        <h3>${esc(d.nom)}</h3>
+        <p>${esc(d.texte)}</p>
+      </article>`).join(""));
+
+    fill("[data-valeurs]", S.valeurs.map((v, i) => `
+      <article class="value-card" data-reveal style="--i:${i}">
+        <span class="value-num">${String(i + 1).padStart(2, "0")}</span>
         <div class="value-icon">${icon(v.icone)}</div>
         <h3>${esc(v.nom)}</h3>
         <p>${esc(v.texte)}</p>
       </article>`).join(""));
 
-    fill("[data-zones]", S.zones.map((z) => `
-      <li class="zone">${icon("pin")}<div><strong>${esc(z.nom)}</strong><span>${esc(z.detail)}</span></div></li>`).join(""));
+    fill("[data-etapes]", S.etapes.map((e, i) => `
+      <li class="step" data-reveal style="--i:${i}">
+        <div class="step-badge">${icon(e.icone)}<span>${i + 1}</span></div>
+        <h3>${esc(e.titre)}</h3>
+        <p>${esc(e.texte)}</p>
+      </li>`).join(""));
 
-    fill("[data-equipe]", S.equipe.map((m) => `
-      <li class="member">
+    fill("[data-apercu]", futurs.map(projectCard).join(""));
+
+    fill("[data-zones]", S.zones.map((z, i) => `
+      <li class="zone" data-reveal="left" style="--i:${i}">
+        <span class="zone-pin">${icon("pin")}</span>
+        <div><strong>${esc(z.nom)}</strong><span>${esc(z.detail)}</span></div>
+      </li>`).join(""));
+
+    fill("[data-equipe]", S.equipe.map((m, i) => `
+      <li class="member" data-reveal="zoom" style="--i:${i}">
         <div class="avatar" aria-hidden="true">${esc(m.nom.split(/\s+/).map((w) => w[0]).join("").slice(0, 2))}</div>
         <strong>${esc(m.nom)}</strong><span>${esc(m.role)}</span>
       </li>`).join(""));
 
-    fill("[data-apercu]", futurs.slice(0, 3).map(projectCard).join(""));
+    setupMarquees();
+    setupQuotes();
   }
 
   // ---------- Page : futurs projets ----------
   const meta = (name, label, value) =>
     `<li>${icon(name)}<span><small>${label}</small>${value}</span></li>`;
 
-  function projectCard(p) {
-    return `
-      <article class="card project-card">
-        <div class="card-media">${photo(p.image, p.titre)}<span class="chip">${esc(p.type)}</span></div>
-        <div class="card-body">
-          <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}</p>
-          ${progress(p)}
-          <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet →</a>
-        </div>
-      </article>`;
-  }
-
   function renderFuturs() {
     const list = S.projetsFuturs;
-    fill("[data-futurs]", list.length ? list.map((p) => `
-      <article class="project-detail" id="${esc(p.id)}">
-        <div class="pd-media">${photo(p.image, p.titre)}<span class="chip">${esc(p.type)}</span></div>
+    fill("[data-futurs]", list.length ? list.map((p, n) => `
+      <article class="project-detail" id="${esc(p.id)}" data-reveal>
+        <div class="pd-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span><span class="pd-index">${String(n + 1).padStart(2, "0")}</span></div>
         <div class="pd-body">
           <h2>${esc(p.titre)}</h2>
           <p>${esc(p.description)}</p>
           <ul class="meta-grid">
             ${meta("pin", "Localisation", esc(p.lieu))}
             ${meta("tag", "Type de projet", esc(p.type))}
-            ${meta("users", "Bénéficiaires estimés", num(p.beneficiaires))}
-            ${meta("coin", "Budget nécessaire", money(p.budget))}
+            ${meta("users", "Bénéficiaires estimés", counter(p.beneficiaires))}
+            ${meta("coin", "Budget nécessaire", counter(p.budget, "money"))}
           </ul>
           ${p.calendrier && p.calendrier.length ? `
             <h3 class="h-small">${icon("calendar", "icon icon-sm")} Calendrier prévisionnel</h3>
-            <ol class="timeline">${p.calendrier.map((c) => `<li><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}</ol>` : ""}
+            <ol class="timeline">${p.calendrier.map((c, i) => `
+              <li data-reveal="left" style="--i:${i + 1}"><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}
+            </ol>` : ""}
           <div class="pd-funding">
             ${progress(p)}
             ${donButton(p, "Soutenir ce projet")}
@@ -219,15 +471,47 @@
   // ---------- Page : réalisations ----------
   const PHASES = [["avant", "Avant"], ["pendant", "Pendant"], ["apres", "Après"]];
 
+  const comingSoon = () => `
+    <div class="coming" data-reveal>
+      <div class="sprout" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <ellipse class="sp-ring" cx="100" cy="150" rx="34" ry="9"/>
+          <ellipse class="sp-ring r2" cx="100" cy="150" rx="34" ry="9"/>
+          <path class="sp-ground" d="M44 150h112"/>
+          <path class="sp-stem" d="M100 150V80"/>
+          <path class="sp-leaf l1" d="M100 100c0-22 14-36 40-38-2 26-16 38-40 38z"/>
+          <path class="sp-leaf l2" d="M100 115c0-18-12-30-34-31 2 21 13 31 34 31z"/>
+        </svg>
+      </div>
+      <span class="eyebrow">Bientôt ici</span>
+      <h2>Nos premières réalisations arrivent bientôt</h2>
+      <p class="muted">L'association démarre son action. Dès qu'un projet sera terminé, vous retrouverez ici, en toute transparence :</p>
+      <ul class="coming-steps">
+        <li data-reveal style="--i:1">${icon("camera")}<strong>Avant · Pendant · Après</strong><span>Les photos de chaque étape du projet.</span></li>
+        <li data-reveal style="--i:2">${icon("coin")}<strong>Les dépenses</strong><span>Le détail de chaque somme dépensée.</span></li>
+        <li data-reveal style="--i:3">${icon("target")}<strong>Le résultat</strong><span>L'impact concret pour les bénéficiaires.</span></li>
+      </ul>
+      <div class="actions-center">
+        <a class="btn btn-green" href="projets.html">Découvrir nos futurs projets</a>
+        ${donButton(null, "Soutenir un projet")}
+      </div>
+    </div>`;
+
   function renderRealises() {
     const list = S.projetsRealises;
-    fill("[data-realises-stats]", [
-      [list.length, "projets terminés"],
-      [num(sum(list, (p) => p.beneficiaires)), "bénéficiaires"],
-      [money(sum(list, (p) => sum(p.depenses, (d) => d.montant))), "investis sur le terrain"],
-    ].map(([v, l]) => `<div class="stat"><strong>${v}</strong><span>${l}</span></div>`).join(""));
+    if (!list.length) {
+      $("[data-realises-stats]").closest(".stats-wrap").remove();
+      fill("[data-realises]", comingSoon());
+      return;
+    }
 
-    fill("[data-realises]", list.length ? list.map((p) => {
+    fill("[data-realises-stats]", statItems([
+      [list.length, "projets terminés"],
+      [sum(list, (p) => p.beneficiaires), "bénéficiaires"],
+      [sum(list, (p) => sum(p.depenses, (d) => d.montant)), "investis sur le terrain", "money"],
+    ]));
+
+    fill("[data-realises]", list.map((p) => {
       const total = sum(p.depenses, (d) => d.montant);
       const tabs = PHASES.map(([k, label], i) => `
         <button role="tab" aria-selected="${i === 0}" aria-controls="${esc(p.id)}-${k}" id="${esc(p.id)}-tab-${k}" tabindex="${i === 0 ? 0 : -1}">${label}</button>`).join("");
@@ -236,13 +520,13 @@
         return `
           <div class="gallery" role="tabpanel" id="${esc(p.id)}-${k}" aria-labelledby="${esc(p.id)}-tab-${k}"${i === 0 ? "" : " hidden"}>
             ${pics.length
-              ? pics.map((src) => `<button class="thumb" data-full="${esc(src)}" aria-label="Agrandir la photo">${photo(src, `${p.titre} — ${label}`)}</button>`).join("")
-              : `<div class="thumb">${photo("", "", `Photo « ${label} » à venir`)}</div>`}
+              ? pics.map((src) => `<button class="thumb" data-full="${esc(src)}" aria-label="Agrandir la photo">${visual(src, `${p.titre} — ${label}`)}</button>`).join("")
+              : `<div class="thumb">${visual("", "", p.type, `Photo « ${label} » à venir`)}</div>`}
           </div>`;
       }).join("");
 
       return `
-        <article class="realisation" id="${esc(p.id)}">
+        <article class="realisation" id="${esc(p.id)}" data-reveal>
           <header class="real-head">
             <span class="chip chip-static">${esc(p.type)}</span>
             <h2>${esc(p.titre)}</h2>
@@ -267,14 +551,14 @@
             </div>
           </div>
         </article>`;
-    }).join("") : '<p class="empty">Nos premiers projets réalisés seront présentés ici très bientôt.</p>');
+    }).join(""));
 
-    document.querySelectorAll(".tabs").forEach(setupTabs);
+    $$(".tabs").forEach(setupTabs);
     setupLightbox();
   }
 
   function setupTabs(tablist) {
-    const tabs = [...tablist.querySelectorAll("[role=tab]")];
+    const tabs = $$("[role=tab]", tablist);
     const select = (tab) => {
       tabs.forEach((t) => {
         const on = t === tab;
@@ -298,7 +582,7 @@
     box.className = "lightbox";
     box.innerHTML = `<button class="lb-close" aria-label="Fermer">${icon("close")}</button><img alt="">`;
     document.body.appendChild(box);
-    const img = box.querySelector("img");
+    const img = $("img", box);
     document.addEventListener("click", (e) => {
       const t = e.target.closest("[data-full]");
       if (t) { img.src = t.dataset.full; box.showModal(); }
@@ -311,26 +595,29 @@
     const list = S.projetsFuturs;
     const totalBudget = sum(list, (p) => p.budget);
     const totalCollecte = sum(list, (p) => p.collecte);
+    const v = pct(totalCollecte, totalBudget);
     fill("[data-cagnotte-total]", `
-      <div class="total-card">
-        <div><small>Total collecté</small><strong>${money(totalCollecte)}</strong></div>
-        <div><small>Objectif global</small><strong>${money(totalBudget)}</strong></div>
+      <div class="total-card" data-reveal style="--i:2">
+        <div><small>Total collecté</small><strong>${counter(totalCollecte, "money")}</strong></div>
+        <div><small>Objectif global</small><strong>${counter(totalBudget, "money")}</strong></div>
         <div class="total-progress">
-          ${bar(pct(totalCollecte, totalBudget))}
-          <div class="progress-sub"><strong class="pct">${pct(totalCollecte, totalBudget)}%</strong> de l'objectif atteint · Reste : ${money(Math.max(0, totalBudget - totalCollecte))}</div>
+          ${bar(v)}
+          <div class="progress-sub"><strong class="pct">${counter(v, "pct")}</strong> de l'objectif atteint${totalCollecte > 0
+            ? ` · Reste : ${money(Math.max(0, totalBudget - totalCollecte))}`
+            : ` · <span class="first">La collecte démarre : soyez parmi les premiers !</span>`}</div>
         </div>
       </div>`);
 
-    fill("[data-cagnotte]", list.map((p) => `
-      <article class="card fund-card">
+    fill("[data-cagnotte]", list.map((p, i) => `
+      <article class="card fund-card" data-reveal style="--i:${i}">
+        <div class="card-media card-media-thin">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
-          <span class="chip chip-static">${esc(p.type)}</span>
           <h3>${esc(p.titre)}</h3>
           <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)} · ${num(p.beneficiaires)} bénéficiaires</p>
           ${progress(p)}
           <div class="fund-actions">
             ${donButton(p, "Donner pour ce projet")}
-            <a class="link-arrow" href="projets.html#${esc(p.id)}">Détails →</a>
+            <a class="link-arrow" href="projets.html#${esc(p.id)}">Détails <span aria-hidden="true">→</span></a>
           </div>
         </div>
       </article>`).join(""));
@@ -350,6 +637,9 @@
   // ---------- Lancement ----------
   renderLayout();
   ({ index: renderHome, projets: renderFuturs, realisations: renderRealises, cagnotte: renderCagnotte }[page] || (() => {}))();
+  $$("[data-carousel]").forEach(setupCarousel);
+  setupScroll();
+  animateOnScroll();
 
   // Ancre (#projet) après rendu dynamique
   if (location.hash) {
