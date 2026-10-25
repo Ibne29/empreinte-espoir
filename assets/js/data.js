@@ -1,30 +1,38 @@
 /*
  * ============================================================
- *  CONTENU DU SITE — Association Empreinte d'Espoir
+ *  CONTENU DU SITE : Association Empreinte d'Espoir
  * ============================================================
  *  C'est le SEUL fichier à modifier pour mettre à jour le site :
  *  textes, projets, montants collectés, photos, contacts.
  *
- *  - Les montants sont des nombres sans espace : 1500000
- *  - Les dates sont libres : "Janvier 2027", "T2 2027"...
+ *  - Les montants sont en euros, sans espace : 370
+ *    Le site affiche automatiquement l'équivalent en francs CFA
+ *    (taux fixe : 1 € = 655,957 F CFA).
+ *  - Les dates sont libres : "Janvier 2027", "Mars à juin 2027"...
  *  - Les photos se placent dans assets/img/projets/ puis on
- *    indique leur chemin : "assets/img/projets/puits-avant.jpg"
+ *    indique leur chemin : "assets/img/projets/repas-avant.jpg"
  *  - Sans photo, une illustration aux couleurs du projet s'affiche.
  *
- *  ⚠ Les futurs projets ci-dessous sont des EXEMPLES à remplacer.
- *    Tant que demo vaut true, un bandeau l'indique sur le site.
+ *  ATTENTION : les futurs projets ci-dessous sont des EXEMPLES.
+ *  Leurs budgets sont des estimations faites à partir des prix
+ *  courants au Sénégal, à vérifier sur place.
+ *  Tant que demo vaut true, un bandeau l'indique sur le site.
  * ============================================================
  */
 window.SITE = {
   demo: true,
 
   nom: "Empreinte d'Espoir",
-  slogan: "Laisser une trace durable là où l'espoir manque.",
-  // Code de devise : "EUR" (euro) ou "XOF" (franc CFA)
+  slogan: "Une aide concrète pour les enfants talibés du Sénégal.",
+  // Texte sous le grand titre de la page d'accueil
+  accroche:
+    "Au Sénégal, des milliers d'enfants des écoles coraniques mendient chaque jour dans la rue. Nous leur apportons une aide concrète, projet par projet.",
+  // Monnaie dans laquelle les montants sont saisis : "EUR" (euro) ou "XOF" (franc CFA).
+  // L'autre monnaie s'affiche à côté, entre parenthèses.
   devise: "EUR",
 
-  // Mots qui défilent dans le grand titre : « Ensemble, apportons … »
-  motsHero: ["l'eau potable", "l'éducation", "la santé", "l'espoir"],
+  // Fin du grand titre, qui change toutes les 3 secondes : « Offrons aux enfants talibés … »
+  motsHero: ["un repas chaud", "des soins", "une moustiquaire", "de l'espoir"],
 
   contact: {
     email: "contact@empreintedespoir.org",
@@ -47,50 +55,63 @@ window.SITE = {
 
   presentation: {
     quiSommesNous:
-      "Empreinte d'Espoir est une association à but non lucratif fondée par des femmes et des hommes engagés, qui ont choisi d'agir concrètement auprès des populations les plus vulnérables d'Afrique. Nous partons des besoins exprimés sur le terrain et nous rendons compte de chaque franc dépensé.",
+      "Empreinte d'Espoir est une association de bénévoles. Nous avons décidé d'agir pour les enfants talibés que l'on croise chaque jour dans les rues du Sénégal. Nous commençons petit, avec des projets concrets et chiffrés, et nous publions chacune de nos dépenses.",
     mission:
-      "Améliorer durablement les conditions de vie des personnes défavorisées en finançant et en réalisant des projets utiles : accès à l'eau, éducation, santé, alimentation et soutien aux familles.",
+      "Aider les enfants talibés à manger à leur faim, à se soigner, à dormir dans de meilleures conditions et à apprendre.",
     organisation:
-      "L'association est dirigée par un bureau bénévole élu par l'assemblée générale. Les décisions de financement sont prises collectivement, et chaque projet est suivi par un référent local présent sur place.",
+      "L'association est gérée par un bureau de bénévoles. Les décisions de financement sont prises ensemble, et chaque projet a un responsable sur place.",
   },
 
-  // Icônes disponibles : drop, book, health, bowl, home, heart, leaf, hands, eye, target
+  // Section « Qui sont les enfants talibés ? »
+  talibes: {
+    intro:
+      "Au Sénégal, beaucoup de familles confient leurs garçons à un maître coranique pour qu'ils apprennent le Coran dans un daara. Ces élèves s'appellent les talibés. De nombreux maîtres prennent soin d'eux. Mais dans d'autres daaras, les enfants doivent mendier chaque jour pour rapporter de l'argent, du riz ou du sucre. Ils mangent peu, manquent de savon et de moustiquaires, et dorment sur des nattes posées sur le sable.",
+    chiffres: [
+      { valeur: "Plus de 100 000", texte: "enfants talibés obligés de mendier chaque jour au Sénégal." },
+      { valeur: "100 à 1 250 F CFA", texte: "la somme que la plupart des talibés interrogés devaient rapporter chaque jour à leur maître." },
+      { valeur: "13 daaras sur 22", texte: "visités par les enquêteurs donnaient peu ou pas de nourriture aux enfants." },
+    ],
+    source: {
+      texte: "Chiffres : Human Rights Watch, rapport publié en juin 2019.",
+      lien: "https://www.hrw.org/fr/news/2019/06/11/senegal-des-abus-incontroles-dans-des-ecoles-coraniques",
+    },
+  },
+
+  // Icônes disponibles : bowl, health, home, book, drop, heart, leaf, hands, eye, target
   domaines: [
-    { nom: "Accès à l'eau", icone: "drop", texte: "Puits, forages et points d'eau potable pour les villages." },
-    { nom: "Éducation", icone: "book", texte: "Fournitures, salles de classe et soutien aux élèves." },
-    { nom: "Santé", icone: "health", texte: "Équipement des cases de santé et accès aux soins." },
-    { nom: "Alimentation", icone: "bowl", texte: "Colis alimentaires pour les familles en difficulté." },
-    { nom: "Soutien aux familles", icone: "home", texte: "Aide d'urgence et accompagnement des foyers fragiles." },
+    { nom: "Repas", icone: "bowl", texte: "Des repas chauds pour des enfants qui mangent souvent ce qu'on leur donne dans la rue." },
+    { nom: "Santé et hygiène", icone: "health", texte: "Du savon, des soins contre la gale et les plaies, des moustiquaires contre le paludisme." },
+    { nom: "Couchage", icone: "home", texte: "Des nattes et des couvertures pour ne plus dormir à même le sol." },
+    { nom: "Éducation", icone: "book", texte: "Des cahiers et des cours de lecture et de calcul, en plus de l'enseignement coranique." },
   ],
 
   valeurs: [
-    { nom: "Solidarité", icone: "hands", texte: "Nous agissons ensemble, avec et pour les communautés." },
-    { nom: "Transparence", icone: "eye", texte: "Chaque don est tracé, chaque dépense est publiée." },
-    { nom: "Sincérité", icone: "heart", texte: "Des engagements honnêtes, tenus jusqu'au bout." },
-    { nom: "Durabilité", icone: "leaf", texte: "Des réalisations pensées pour durer dans le temps." },
-    { nom: "Impact", icone: "target", texte: "Des résultats concrets, mesurés et partagés." },
+    { nom: "Solidarité", icone: "hands", texte: "Aider les enfants, avec les personnes qui les entourent." },
+    { nom: "Transparence", icone: "eye", texte: "Chaque don et chaque dépense sont publiés sur ce site." },
+    { nom: "Sincérité", icone: "heart", texte: "Nous ne promettons que ce que nous pouvons tenir." },
+    { nom: "Durabilité", icone: "leaf", texte: "Des actions qui continuent de servir après notre passage." },
+    { nom: "Impact", icone: "target", texte: "Nous comptons les enfants aidés et nous le montrons." },
   ],
 
-  // « Comment ça marche » sur la page d'accueil
+  // Section « Comment nous travaillons »
   etapes: [
-    { titre: "Identifier un besoin", icone: "search", texte: "Nos référents locaux recensent les besoins avec les communautés." },
-    { titre: "Collecter les fonds", icone: "coin", texte: "Chaque projet a sa cagnotte, avec un objectif clair et public." },
-    { titre: "Réaliser sur le terrain", icone: "tool", texte: "Les travaux et distributions sont menés avec des acteurs locaux." },
-    { titre: "Rendre des comptes", icone: "camera", texte: "Photos avant / pendant / après et dépenses publiées sur ce site." },
+    { titre: "Aller à la rencontre", icone: "search", texte: "Nous rencontrons les maîtres coraniques et les enfants pour connaître leurs besoins." },
+    { titre: "Collecter", icone: "coin", texte: "Chaque projet a sa cagnotte et un objectif chiffré." },
+    { titre: "Agir sur place", icone: "tool", texte: "Les achats se font au Sénégal et nos bénévoles assurent la distribution." },
+    { titre: "Rendre compte", icone: "camera", texte: "Photos, dépenses et nombre d'enfants aidés sont publiés ici." },
   ],
 
-  // Citations qui défilent sur la page d'accueil
+  // Proverbes qui défilent sur la page d'accueil
   citations: [
     { texte: "Nit nittay garabam.", traduction: "L'homme est le remède de l'homme.", source: "Proverbe wolof" },
-    { texte: "Seul on va plus vite, ensemble on va plus loin.", source: "Proverbe africain" },
     { texte: "Il faut tout un village pour élever un enfant.", source: "Proverbe africain" },
-    { texte: "Quand les toiles d'araignée s'unissent, elles peuvent attacher un lion.", source: "Proverbe éthiopien" },
+    { texte: "Seul on va plus vite, ensemble on va plus loin.", source: "Proverbe africain" },
   ],
 
   zones: [
-    { nom: "Sénégal", detail: "Régions rurales — à préciser" },
-    { nom: "Mali", detail: "Zones à préciser" },
-    { nom: "Guinée", detail: "Zones à préciser" },
+    { nom: "Dakar", detail: "Quartier à préciser" },
+    { nom: "Thiès", detail: "Quartier à préciser" },
+    { nom: "Saint-Louis", detail: "Quartier à préciser" },
   ],
 
   equipe: [
@@ -102,84 +123,92 @@ window.SITE = {
 
   // ---------- 2. FUTURS PROJETS (alimentent aussi la cagnotte) ----------
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
+  // exemple = ce que permet un petit don, affiché sous la barre de collecte
   projetsFuturs: [
     {
-      id: "puits-village",
-      titre: "Forage d'un puits pour un village",
-      lieu: "Région de Kaolack, Sénégal",
-      type: "Accès à l'eau",
-      beneficiaires: 800,
-      budget: 9000,
+      id: "repas-vendredi",
+      titre: "Un repas chaud chaque vendredi",
+      lieu: "Dakar",
+      type: "Repas",
+      beneficiaires: 50,
+      // 12 repas x 20 000 F CFA (environ 400 F CFA par enfant) = 240 000 F CFA, soit 366 €
+      budget: 370,
       collecte: 0,
       description:
-        "Construction d'un puits équipé d'une pompe manuelle pour offrir un accès à l'eau potable toute l'année et réduire les longues marches quotidiennes des femmes et des enfants.",
+        "Un repas chaud (riz, poisson et légumes) chaque vendredi pendant trois mois pour les 50 enfants d'un daara. Le repas est préparé sur place par une cuisinière du quartier.",
       image: "",
       lienDon: "", // lien spécifique à ce projet (sinon lien principal)
+      exemple: { montant: 5, texte: "un enfant reçoit un repas chaud chaque vendredi pendant deux mois" },
       calendrier: [
-        { etape: "Étude du terrain", date: "Janvier 2027" },
-        { etape: "Travaux de forage", date: "Mars 2027" },
-        { etape: "Mise en service", date: "Mai 2027" },
+        { etape: "Choix du daara et de la cuisinière", date: "Décembre 2026" },
+        { etape: "Un repas chaud chaque vendredi", date: "Janvier à mars 2027" },
+        { etape: "Bilan publié sur le site", date: "Avril 2027" },
       ],
     },
     {
-      id: "fournitures-scolaires",
-      titre: "Kits scolaires pour la rentrée",
-      lieu: "Ziguinchor, Sénégal",
-      type: "Éducation",
-      beneficiaires: 300,
-      budget: 4500,
+      id: "hygiene-soins",
+      titre: "Savon, hygiène et soins",
+      lieu: "Thiès",
+      type: "Santé et hygiène",
+      beneficiaires: 50,
+      // 50 kits x 3 000 F CFA + soins de la gale 75 000 + infirmier 20 000 + bassines et seaux 15 000
+      // = 260 000 F CFA, soit 396 €
+      budget: 400,
       collecte: 0,
       description:
-        "Distribution de kits complets (cartables, cahiers, stylos, manuels) aux élèves de trois écoles primaires de zones rurales.",
+        "Un kit pour chaque enfant (savon, brosse à dents, dentifrice, serviette), des bassines et des seaux pour le daara, et le passage d'un infirmier pour soigner la gale et les plaies.",
       image: "",
       lienDon: "",
+      exemple: { montant: 5, texte: "vous offrez un kit d'hygiène complet à un enfant" },
       calendrier: [
-        { etape: "Recensement des élèves", date: "Juin 2027" },
-        { etape: "Achats et préparation", date: "Août 2027" },
-        { etape: "Distribution", date: "Octobre 2027" },
+        { etape: "Achat des kits et des produits", date: "Janvier 2027" },
+        { etape: "Distribution et premiers soins", date: "Février 2027" },
+        { etape: "Deuxième passage de l'infirmier", date: "Mars 2027" },
       ],
     },
     {
-      id: "case-sante",
-      titre: "Équipement d'une case de santé",
-      lieu: "Région de Kayes, Mali",
-      type: "Santé",
-      beneficiaires: 1500,
-      budget: 12000,
+      id: "moustiquaires-nattes",
+      titre: "Moustiquaires et nattes",
+      lieu: "Saint-Louis",
+      type: "Couchage",
+      beneficiaires: 40,
+      // 40 moustiquaires x 3 500 F CFA + 20 nattes x 3 000 F CFA = 200 000 F CFA, soit 305 €
+      budget: 310,
       collecte: 0,
       description:
-        "Achat de matériel médical de base, de lits et de médicaments essentiels pour une case de santé qui dessert plusieurs villages.",
+        "40 moustiquaires imprégnées et 20 nattes neuves pour un daara, avant la saison des pluies, période où le paludisme progresse.",
       image: "",
       lienDon: "",
+      exemple: { montant: 6, texte: "un enfant dort sous une moustiquaire imprégnée" },
       calendrier: [
-        { etape: "Évaluation des besoins", date: "T1 2027" },
-        { etape: "Achat du matériel", date: "T3 2027" },
-        { etape: "Livraison et formation", date: "T4 2027" },
+        { etape: "Recensement des enfants du daara", date: "Avril 2027" },
+        { etape: "Achat et distribution", date: "Juin 2027" },
+        { etape: "Vérification sur place", date: "Septembre 2027" },
       ],
     },
   ],
 
   // ---------- 3. PROJETS RÉALISÉS ----------
-  // Vide pour l'instant : la page affiche « Nos premières réalisations arrivent bientôt ».
+  // Vide pour l'instant : la page affiche « Nos premiers projets sont en préparation ».
   // Quand un projet est terminé, ajouter un bloc sur ce modèle :
   //
   // {
-  //   id: "puits-village",
-  //   titre: "Forage d'un puits pour un village",
-  //   lieu: "Région de Kaolack, Sénégal",
-  //   type: "Accès à l'eau",
-  //   date: "Mai 2027",
-  //   beneficiaires: 800,
+  //   id: "repas-vendredi",
+  //   titre: "Un repas chaud chaque vendredi",
+  //   lieu: "Dakar",
+  //   type: "Repas",
+  //   date: "Avril 2027",
+  //   beneficiaires: 50,
   //   description: "Ce qui a été fait.",
-  //   resultat: "Le résultat concret pour les bénéficiaires.",
+  //   resultat: "Le résultat concret pour les enfants.",
   //   depenses: [
-  //     { poste: "Forage", montant: 6000 },
-  //     { poste: "Pompe manuelle", montant: 2500 },
+  //     { poste: "Riz, poisson et légumes", montant: 280 },
+  //     { poste: "Gaz et cuisinière", montant: 85 },
   //   ],
   //   photos: {
-  //     avant: ["assets/img/projets/puits-avant.jpg"],
-  //     pendant: ["assets/img/projets/puits-pendant.jpg"],
-  //     apres: ["assets/img/projets/puits-apres.jpg"],
+  //     avant: ["assets/img/projets/repas-avant.jpg"],
+  //     pendant: ["assets/img/projets/repas-pendant.jpg"],
+  //     apres: ["assets/img/projets/repas-apres.jpg"],
   //   },
   // },
   projetsRealises: [],

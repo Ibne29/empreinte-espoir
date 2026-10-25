@@ -1,4 +1,4 @@
-# Site — Association Empreinte d'Espoir
+# Site de l'association Empreinte d'Espoir
 
 Site statique (HTML/CSS/JS, sans base de données ni outil à installer) en 4 pages :
 
@@ -23,6 +23,8 @@ Double-cliquer sur `index.html`, ou lancer `python3 -m http.server` dans ce doss
 - **Nouveau projet** : copier un bloc `{ ... }` dans `projetsFuturs` et changer les valeurs (`id` unique, sans espace ni accent).
 - **Projet terminé** : le retirer de `projetsFuturs` et l'ajouter à `projetsRealises` (un modèle prêt à copier est en commentaire dans `data.js`). Tant que la liste est vide, la page Réalisations affiche « Nos premières réalisations arrivent bientôt ».
 - **Montant collecté** : modifier le champ `collecte` du projet. Les compteurs animés, les barres d'avancement, les pourcentages et les totaux se recalculent seuls.
+- **Euros et francs CFA** : les montants se saisissent en euros et l'équivalent en francs CFA s'affiche à côté (taux fixe : 1 € = 655,957 F CFA). Pour saisir en francs CFA, mettre `devise: "XOF"` : les euros s'afficheront alors à côté.
+- **Budgets des exemples** : ils sont calculés à partir des prix courants au Sénégal (détail en commentaire au-dessus de chaque budget dans `data.js`). À vérifier sur place avant de lancer une collecte.
 - **Photos** : les déposer dans `assets/img/projets/`, puis indiquer leur chemin, par exemple
   `photos: { avant: ["assets/img/projets/puits-avant.jpg"], pendant: [], apres: [] }`.
   Les réduire avant de les envoyer (environ 1600 px de large, moins de 300 Ko) : beaucoup de visiteurs consultent le site sur mobile avec peu de données.

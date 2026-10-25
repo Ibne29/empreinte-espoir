@@ -1,4 +1,4 @@
-/* ============ Empreinte d'Espoir — feuille de style ============ */
+/* ============ Empreinte d'Espoir : feuille de style ============ */
 :root {
   --green: #1f7a4d;
   --green-dark: #155c39;
@@ -218,18 +218,11 @@ p { margin: 0 0 1em; }
   font-weight: 600; font-size: .88rem; letter-spacing: .04em;
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
-.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: ping 2s ease-out infinite; }
-@keyframes ping {
-  0% { box-shadow: 0 0 0 0 rgba(232, 197, 90, .8); }
-  80%, 100% { box-shadow: 0 0 0 10px rgba(232, 197, 90, 0); }
-}
 
 /* Mots qui défilent dans le titre */
 .rotator { display: block; position: relative; height: 1.25em; overflow: hidden; }
 .rotator span {
-  position: absolute; left: 0; top: 0; line-height: 1.25; white-space: nowrap;
-  background: linear-gradient(90deg, var(--gold-light), var(--gold));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  position: absolute; left: 0; top: 0; line-height: 1.25; white-space: nowrap; color: var(--gold-light);
   opacity: 0; transform: translateY(100%);
   transition: transform .8s var(--ease), opacity .8s var(--ease);
 }
@@ -277,12 +270,12 @@ p { margin: 0 0 1em; }
 .stats.stats-3 { grid-template-columns: 1fr; }
 @media (min-width: 720px) { .stats.stats-3 { grid-template-columns: repeat(3, 1fr); } }
 .stat { padding: 26px 16px; text-align: center; box-shadow: 1px 1px 0 var(--line); }
-.stat strong {
-  display: block; font-family: var(--font-title); font-size: clamp(1.9rem, 5vw, 2.7rem); line-height: 1.1;
-  background: linear-gradient(135deg, var(--green), var(--blue));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
+.stat strong { display: block; font-family: var(--font-title); font-size: clamp(1.9rem, 5vw, 2.7rem); line-height: 1.1; color: var(--green); }
 .stat > span { color: var(--muted); font-size: .95rem; }
+
+/* Équivalent dans l'autre monnaie, entre parenthèses */
+.alt { font-family: var(--font-body); font-weight: 400; font-size: .8em; color: var(--muted); white-space: nowrap; }
+.stat .alt, .total-card .alt { display: block; margin-top: 2px; font-size: .9rem; }
 
 /* ---------- Bandeaux qui défilent ---------- */
 .marquees { position: relative; overflow: hidden; padding: 64px 0 40px; }
@@ -295,8 +288,8 @@ p { margin: 0 0 1em; }
 .mq-item { display: inline-flex; align-items: center; gap: 12px; padding: 0 26px; font-family: var(--font-title); font-weight: 600; font-size: clamp(1.1rem, 2.6vw, 1.5rem); white-space: nowrap; }
 .mq-item .icon { width: 26px; height: 26px; color: var(--gold); }
 .marquee-b .mq-item .icon { color: var(--blue-dark); }
-.mq-sep { display: inline-flex; align-items: center; color: var(--gold); }
-.marquee-b .mq-sep { color: var(--white); }
+.mq-sep { flex-shrink: 0; align-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+.marquee-b .mq-sep { background: var(--white); }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* ---------- Sections ---------- */
@@ -307,13 +300,8 @@ p { margin: 0 0 1em; }
 .section-dark h2, .section-dark h3 { color: var(--white); }
 .section-head { max-width: 680px; margin-bottom: 44px; }
 .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px;
-  font-family: var(--font-title); font-weight: 600; font-size: .85rem; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--green);
-}
-.eyebrow::before { content: ""; width: 26px; height: 2px; border-radius: 2px; background: currentColor; }
-.hero .eyebrow, .section-dark .eyebrow { color: var(--gold-light); }
+.section-head p { margin: 0; }
+.label { display: block; margin-bottom: 10px; font-family: var(--font-title); font-weight: 600; font-size: 1rem; color: var(--gold-light); }
 .two-col { display: grid; gap: 40px; }
 @media (min-width: 900px) { .two-col { grid-template-columns: 1fr 1fr; gap: 64px; } }
 
@@ -334,8 +322,24 @@ p { margin: 0 0 1em; }
   border-radius: 50%; border: 2px solid rgba(232, 197, 90, .45); animation: breathe 7s ease-in-out infinite;
 }
 @keyframes breathe { 50% { transform: scale(1.18); } }
-.mission-card .eyebrow { color: var(--gold-light); }
 .mission-card p { font-size: 1.18rem; margin: 0; }
+
+/* Qui sont les enfants talibés ? */
+.talibes { display: grid; gap: 36px; }
+@media (min-width: 900px) { .talibes { grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: start; } }
+.talibes-text p { font-size: 1.08rem; }
+.facts { display: grid; gap: 14px; }
+.fact {
+  padding: 22px 24px; border-radius: 18px; background: var(--bg); border-left: 5px solid var(--gold);
+  transition: transform .35s var(--ease), box-shadow .35s;
+}
+.fact:nth-child(2) { border-left-color: var(--green); }
+.fact:nth-child(3) { border-left-color: var(--blue); }
+.fact:hover { transform: translateX(6px); box-shadow: var(--shadow); }
+.fact strong { display: block; font-family: var(--font-title); font-size: clamp(1.6rem, 4vw, 2.1rem); line-height: 1.15; color: var(--blue-dark); }
+.fact p { margin: 4px 0 0; color: var(--muted); }
+.facts-source { margin: 0; font-size: .88rem; color: var(--muted); }
+.facts-source a { color: var(--muted); }
 
 /* Domaines d'action */
 .domains { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
@@ -463,6 +467,7 @@ p { margin: 0 0 1em; }
 .ph-edu { --p1: var(--gold-dark); --p2: var(--gold-light); }
 .ph-sante { --p1: var(--green-dark); --p2: var(--green-light); }
 .ph-food { --p1: var(--green); --p2: var(--gold); }
+.ph-couchage { --p1: var(--blue-dark); --p2: var(--green); }
 .ph::before {
   content: ""; position: absolute; inset: 0;
   background-image: radial-gradient(rgba(255, 255, 255, .2) 1.2px, transparent 1.6px); background-size: 18px 18px;
@@ -493,6 +498,8 @@ p { margin: 0 0 1em; }
 .progress-meta .pct { font-weight: 700; color: var(--gold-dark); }
 .progress-sub { color: var(--muted); font-size: .9rem; }
 .first { color: var(--gold-dark); font-weight: 700; }
+.exemple { display: flex; align-items: flex-start; gap: 8px; margin: 14px 0 0; font-size: .95rem; }
+.exemple .icon { margin-top: 4px; color: var(--gold-dark); }
 
 /* ---------- Citations ---------- */
 .quotes-section { overflow: hidden; isolation: isolate; text-align: center; color: var(--white); background: linear-gradient(135deg, var(--green-dark), var(--blue) 65%, var(--blue-dark)); }
@@ -612,6 +619,9 @@ button.thumb:hover img { transform: scale(1.06); }
 .expenses { width: 100%; border-collapse: collapse; font-size: .97rem; }
 .expenses td { padding: 9px 0; border-bottom: 1px dashed var(--line); }
 .expenses td:last-child { padding-left: 12px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.expenses .alt { display: block; font-size: .82rem; }
+.meta-line { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.meta-line span { display: inline-flex; align-items: center; gap: 6px; }
 .expenses tfoot td { padding-top: 12px; border-bottom: 0; border-top: 2px solid var(--blue-dark); font-weight: 700; color: var(--blue-dark); }
 .result { margin-top: 20px; padding: 16px 18px; background: var(--green-soft); border-left: 4px solid var(--green); border-radius: 0 12px 12px 0; }
 .result .h-small { margin-top: 0; color: var(--green-dark); }
@@ -619,7 +629,6 @@ button.thumb:hover img { transform: scale(1.06); }
 
 /* Page « bientôt » tant qu'aucun projet n'est terminé */
 .coming { max-width: 780px; margin: 0 auto; text-align: center; }
-.coming .eyebrow::before { display: none; }
 .sprout { width: 190px; height: 190px; margin: 0 auto; }
 .sprout svg { width: 100%; height: 100%; overflow: visible; }
 .sp-ground { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; }
