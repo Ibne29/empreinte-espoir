@@ -26,7 +26,7 @@ Double-cliquer sur `index.html`, ou lancer `python3 -m http.server` dans ce doss
 - **Montant collecté** : modifier le champ `collecte` du projet. Les compteurs animés, les barres d'avancement, les pourcentages et les totaux se recalculent seuls.
 - **Estimations** : tant qu'un projet est à venir, son budget et son nombre de bénéficiaires s'affichent avec « environ », et la conversion en francs CFA est arrondie. Les montants collectés et les projets réalisés restent exacts.
 - **Euros et francs CFA** : les montants se saisissent en euros et l'équivalent en francs CFA s'affiche à côté (taux fixe : 1 € = 655,957 F CFA). Pour saisir en francs CFA, mettre `devise: "XOF"` : les euros s'afficheront alors à côté.
-- **Budgets** : chaque projet a un `detailBudget` (lignes en euros) et une marge `imprevus` en %. Le budget total se calcule tout seul. Une ligne peut citer une source de prix avec `source: "riz"`, à choisir dans la liste `sources` de `data.js` (on peut en ajouter). Le détail et les sources s'affichent sur la page Futurs projets. Prix à vérifier sur place avec des devis avant de lancer une collecte.
+- **Budgets** : chaque projet a un `detailBudget` (calcul interne en euros, non affiché) et une marge `imprevus` en %. Le budget total se calcule tout seul.
 - **Photos** : les déposer dans `assets/img/projets/`, puis indiquer leur chemin, par exemple
   `photos: { avant: ["assets/img/projets/puits-avant.jpg"], pendant: [], apres: [] }`.
   Les réduire avant de les envoyer (environ 1600 px de large, moins de 300 Ko) : beaucoup de visiteurs consultent le site sur mobile avec peu de données.

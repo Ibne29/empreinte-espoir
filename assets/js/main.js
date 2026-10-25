@@ -115,11 +115,6 @@
         : '<div class="progress-sub first">Soyez le premier à donner !</div>'}`;
   };
 
-  // « Environ 10 € (6 600 F CFA) suffisent pour qu'un habitant… »
-  const exemple = (p) => p.exemple
-    ? `<p class="exemple">${icon("gift", "icon icon-sm")}<span>Environ ${amount(p.exemple.montant, true)} suffisent pour ${esc(p.exemple.texte)}.</span></p>`
-    : "";
-
   // « 50 enfants », « 200 habitants » ; pour un projet à venir : « environ 200 habitants »
   const people = (p, approx = false) => `${approx ? "environ " : ""}${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
 
@@ -130,39 +125,6 @@
       p.budget = Math.round((subtotal(p) * (1 + (p.imprevus || 0) / 100)) / 10) * 10;
     }
   });
-
-  const sourceLink = (s) => s.lien
-    ? `<a href="${esc(s.lien)}" target="_blank" rel="noopener">${esc(s.texte)}</a>`
-    : esc(s.texte);
-
-  // Tableau dépliable : lignes du budget, imprévus, total et sources numérotées
-  const budgetTable = (p) => {
-    const lines = p.detailBudget || [];
-    if (!lines.length) return "";
-    const sources = S.sources || {};
-    const cited = [];
-    const ref = (key) => {
-      if (!key || !sources[key]) return "";
-      if (!cited.includes(key)) cited.push(key);
-      return `<sup>${cited.indexOf(key) + 1}</sup>`;
-    };
-    const rows = lines.map((l) => `<tr><td>${esc(l.poste)}${ref(l.source)}</td><td>${money(l.montant)}</td></tr>`).join("");
-    const margin = p.budget - subtotal(p);
-    const reperes = (p.reperes || []).filter((k) => sources[k]);
-    return `
-      <details class="budget">
-        <summary>Détail du budget estimé et sources des prix</summary>
-        <table class="expenses">
-          <tbody>${rows}
-            ${margin > 0 ? `<tr class="imprevus"><td>Imprévus (${p.imprevus} %)</td><td>${money(margin)}</td></tr>` : ""}
-          </tbody>
-          <tfoot><tr><td>Total estimé</td><td>${money(p.budget)}</td></tr></tfoot>
-        </table>
-        ${cited.length ? `<ol class="sources">${cited.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ol>` : ""}
-        ${reperes.length ? `<p class="budget-note"><strong>Pour comparer :</strong></p><ul class="sources">${reperes.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ul>` : ""}
-        <p class="budget-note">Les lignes sans numéro sont des estimations, à vérifier sur place avec des devis.</p>
-      </details>`;
-  };
 
   // Chiffres clés ; avec un lien, la case entière est cliquable
   const statItems = (items) => items.map(([value, label, format, href], i) => {
@@ -562,10 +524,8 @@
             <ol class="timeline">${p.calendrier.map((c, i) => `
               <li data-reveal="left" style="--i:${i + 1}"><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}
             </ol>` : ""}
-          ${budgetTable(p)}
           <div class="pd-funding">
             ${progress(p)}
-            ${donButton(p, "Soutenir ce projet")}
           </div>
         </div>
       </article>`).join("") : '<p class="empty">Aucun projet en préparation pour le moment.</p>');
@@ -713,6 +673,7 @@
               ? `Reste à collecter : ${money(Math.max(0, totalBudget - totalCollecte), true)}`
               : '<span class="first">La collecte démarre, soyez parmi les premiers !</span>'}</div>
         </div>
+        <div class="total-action">${donButton(null, "Faire un don")}</div>
       </div>`);
 
     setupFilters();
@@ -723,11 +684,7 @@
           <h3>${esc(p.titre)}</h3>
           <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p, true)}</p>
           ${progress(p)}
-          ${exemple(p)}
-          <div class="fund-actions">
-            ${donButton(p, "Donner pour ce projet")}
-            <a class="link-arrow" href="projets.html#${esc(p.id)}">Détails <span aria-hidden="true">→</span></a>
-          </div>
+          <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
         </div>
       </article>`).join(""));
 

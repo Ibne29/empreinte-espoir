@@ -16,8 +16,7 @@
  *  ATTENTION : les futurs projets ci-dessous sont des EXEMPLES.
  *  Le budget de chaque projet est calculé tout seul à partir de
  *  son détail (detailBudget) et de la marge pour les imprévus
- *  (imprevus, en %). Chaque ligne peut citer une source de prix
- *  (voir la liste « sources » plus bas). Prix à vérifier sur place.
+ *  (imprevus, en %). Ce détail n'est pas affiché sur le site.
  *  Tant que demo vaut true, un bandeau l'indique sur le site.
  * ============================================================
  */
@@ -135,39 +134,12 @@ window.SITE = {
     { nom: "Prénom Nom", role: "Responsable des projets" },
   ],
 
-  // ---------- SOURCES DES PRIX ----------
-  // Citées dans le détail des budgets (champ source de chaque ligne).
-  sources: {
-    ciment: {
-      texte: "Ciment : 3 550 F CFA le sac au prix distributeur fixé en juin 2024 (Conseil national de la consommation). Plus cher dans les régions éloignées, nous comptons 4 000 F CFA le sac.",
-      lien: "https://www.ndarinfo.com/Pain-ciment-riz-huile-Les-prix-officiels-devoiles-par-le-Conseil-national-de-la-consommation_a38485.html",
-    },
-    smig: {
-      texte: "Salaire minimum (SMIG) : 370,526 F CFA de l'heure depuis le 1er juillet 2023, soit environ 3 000 F CFA pour une journée de 8 heures. Nous comptons 7 500 F CFA par jour pour un puisatier, ouvrier qualifié.",
-      lien: "https://support.payspace.com/portal/en/kb/articles/senegal-increase-in-transport-allowance-and-smig",
-    },
-    moustiquaire: {
-      texte: "Moustiquaire imprégnée : environ 2 dollars pièce en achat groupé par les grandes organisations (Against Malaria Foundation). Achetée sur place en petite quantité, elle coûte plus cher, nous comptons 4 500 F CFA.",
-      lien: "https://www.againstmalaria.com/DollarsPerNet.aspx",
-    },
-    puitsUnicef: {
-      texte: "Puits creusé à la main avec parois en béton : de 2 500 à 10 000 dollars selon le terrain, 1 à 3 mois de travaux, en saison sèche uniquement (UNICEF et Practica, note technique n° 3, 2009).",
-      lien: "https://www.ri.org//content/uploads/2019/08/Selection-of-Well-Construction-Methods.pdf",
-    },
-    puitsAsso: {
-      texte: "Exemple d'une autre association : 850 € par puits villageois simple au Sénégal, matériel, transport et équipe de 5 puisatiers compris (Vie Sans Frontières).",
-      lien: "https://www.helloasso.com/associations/vie-sans-frontieres/collectes/we-care-about-water",
-    },
-  },
-
   // ---------- 2. FUTURS PROJETS (alimentent aussi la cagnotte) ----------
   // cause = "talibes" ou "eau" (sert aux filtres des pages Projets et Cagnotte)
   // unite = "enfants" par défaut, ou "habitants" pour un village
-  // detailBudget = lignes du budget en euros ; source = clé de la liste « sources » ci-dessus
+  // detailBudget = calcul interne du budget en euros (non affiché sur le site)
   // imprevus = marge en % ajoutée au total des lignes (le budget final est arrondi à la dizaine)
-  // reperes = sources de comparaison citées sous le détail du budget (facultatif)
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
-  // exemple = ce que permet un don, affiché « Environ 10 € suffisent pour … » sur la page Cagnotte
   // Les budgets et les bénéficiaires des futurs projets s'affichent avec « environ » : ce sont des estimations.
   projetsFuturs: [
     {
@@ -191,7 +163,6 @@ window.SITE = {
         "Un kit d'hygiène et du savon pour trois mois pour chaque enfant, et trois passages d'un infirmier pour soigner la gale et les plaies.",
       image: "",
       lienDon: "",
-      exemple: { montant: 15, texte: "offrir à un enfant un kit d'hygiène et du savon pour trois mois" },
       calendrier: [
         { etape: "Achat des kits et des produits", date: "Janvier 2027" },
         { etape: "Distribution et premiers soins", date: "Février 2027" },
@@ -208,9 +179,9 @@ window.SITE = {
       unite: "habitants",
       imprevus: 20,
       detailBudget: [
-        { poste: "Puisatiers : 4 ouvriers pendant 15 jours à 7 500 F CFA par jour", montant: 690, source: "smig" },
+        { poste: "Puisatiers : 4 ouvriers pendant 15 jours à 7 500 F CFA par jour", montant: 690 },
         { poste: "Location d'une motopompe pour vider et nettoyer le puits", montant: 95 },
-        { poste: "Ciment : 25 sacs à 4 000 F CFA", montant: 155, source: "ciment" },
+        { poste: "Ciment : 25 sacs à 4 000 F CFA", montant: 155 },
         { poste: "Fer à béton, sable et gravier", montant: 215 },
         { poste: "Margelle, dalle, couvercle métallique et poulie", montant: 230 },
         { poste: "Transport des matériaux et de l'équipe", montant: 155 },
@@ -221,7 +192,6 @@ window.SITE = {
         "Le puits du village est abîmé et ouvert. Des puisatiers le nettoient et le creusent plus profond, puis une margelle et un couvercle protègent l'eau.",
       image: "",
       lienDon: "",
-      exemple: { montant: 10, texte: "qu'un habitant du village ait accès à une eau propre" },
       calendrier: [
         { etape: "Visite du puits avec les habitants", date: "Janvier 2027" },
         { etape: "Nettoyage et approfondissement, en fin de saison sèche", date: "Avril 2027" },
@@ -237,7 +207,7 @@ window.SITE = {
       beneficiaires: 40,
       imprevus: 15,
       detailBudget: [
-        { poste: "Moustiquaires imprégnées : 40 à 4 500 F CFA", montant: 275, source: "moustiquaire" },
+        { poste: "Moustiquaires imprégnées : 40 à 4 500 F CFA", montant: 275 },
         { poste: "Nattes : 20 à 5 000 F CFA (une pour deux enfants)", montant: 155 },
         { poste: "Couvertures : 40 à 4 000 F CFA", montant: 245 },
         { poste: "Cordes, crochets et installation", montant: 35 },
@@ -248,7 +218,6 @@ window.SITE = {
         "Des moustiquaires et des nattes avant la saison des pluies, puis des couvertures avant les nuits fraîches.",
       image: "",
       lienDon: "",
-      exemple: { montant: 7, texte: "qu'un enfant dorme sous une moustiquaire imprégnée" },
       calendrier: [
         { etape: "Recensement des enfants du daara", date: "Avril 2027" },
         { etape: "Moustiquaires et nattes", date: "Juin 2027" },
@@ -265,8 +234,8 @@ window.SITE = {
       unite: "habitants",
       imprevus: 20,
       detailBudget: [
-        { poste: "Équipe de 5 puisatiers pendant 40 jours à 7 500 F CFA par jour", montant: 2290, source: "smig" },
-        { poste: "Ciment : 120 sacs à 4 000 F CFA pour les parois et la margelle", montant: 735, source: "ciment" },
+        { poste: "Équipe de 5 puisatiers pendant 40 jours à 7 500 F CFA par jour", montant: 2290 },
+        { poste: "Ciment : 120 sacs à 4 000 F CFA pour les parois et la margelle", montant: 735 },
         { poste: "Fer à béton", montant: 385 },
         { poste: "Sable et gravier", montant: 305 },
         { poste: "Location des moules et de l'outillage", montant: 230 },
@@ -275,14 +244,11 @@ window.SITE = {
         { poste: "Analyse de l'eau en laboratoire", montant: 80 },
         { poste: "Formation du comité d'entretien et caisse pour les réparations", montant: 95 },
       ],
-      // Repères de coût cités sous le détail du budget
-      reperes: ["puitsUnicef", "puitsAsso"],
       collecte: 0,
       description:
         "Un puits d'environ 25 mètres, creusé à la main avec des parois en béton, pour un village sans point d'eau proche. Un comité d'habitants est formé pour l'entretenir.",
       image: "",
       lienDon: "",
-      exemple: { montant: 20, texte: "qu'un habitant du village ait de l'eau potable près de chez lui" },
       calendrier: [
         { etape: "Choix de l'emplacement avec le village", date: "Février 2027" },
         { etape: "Creusement et pose des parois en béton, en saison sèche", date: "Mars à mai 2027" },
