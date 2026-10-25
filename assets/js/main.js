@@ -14,13 +14,21 @@
   const RATE = 655.957;
   const currency = (n, code) =>
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: code, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n || 0);
-  // Montant dans la monnaie de saisie, suivi de l'autre monnaie : « 370 € (242 704 F CFA) »
-  const money = (n) => {
-    const [main, alt] = S.devise === "XOF"
-      ? [currency(n, "XOF"), currency((n || 0) / RATE, "EUR")]
-      : [currency(n, "EUR"), currency((n || 0) * RATE, "XOF")];
-    return `${main} <span class="alt">(${alt})</span>`;
+  // Arrondi d'une conversion approximative : 918 340 devient 918 000, 6 560 devient 6 600
+  const roundApprox = (v) => {
+    const step = v >= 100000 ? 1000 : v >= 1000 ? 100 : v >= 100 ? 10 : 1;
+    return Math.round(v / step) * step;
   };
+  // Montant dans la monnaie de saisie, suivi de l'autre monnaie : « 370 € (242 704 F CFA) »
+  // Pour une estimation, la conversion est arrondie : « 370 € (243 000 F CFA) »
+  const amount = (n, approx = false) => {
+    const alt = (v) => (approx ? roundApprox(v) : v);
+    const [main, other] = S.devise === "XOF"
+      ? [currency(n, "XOF"), currency(alt((n || 0) / RATE), "EUR")]
+      : [currency(n, "EUR"), currency(alt((n || 0) * RATE), "XOF")];
+    return `${main} <span class="alt">(${other})</span>`;
+  };
+  const money = (n, approx = false) => `${approx ? "environ " : ""}${amount(n, approx)}`;
 
   const num = (n) => new Intl.NumberFormat("fr-FR").format(Math.round(n || 0));
   const pct = (a, b) => (b > 0 ? Math.min(100, Math.round((a / b) * 100)) : 0);
@@ -86,7 +94,7 @@
 
   // Compteur animé : la valeur s'affiche à 0 puis monte quand l'élément apparaît
   const counter = (value, format = "num") =>
-    `<span data-count="${value || 0}" data-format="${format}">${format === "money" ? money(0) : format === "pct" ? "0%" : "0"}</span>`;
+    `<span data-count="${value || 0}" data-format="${format}">${format === "money" ? money(0) : format === "approx" ? money(0, true) : format === "pct" ? "0%" : "0"}</span>`;
 
   const bar = (v) => `
       <div class="progress" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100" aria-label="Avancement de la collecte">
@@ -101,19 +109,19 @@
         <span><strong>${counter(p.collecte, "money")}</strong> collectés</span>
         <span class="pct">${counter(v, "pct")}</span>
       </div>
-      <div class="progress-sub">Objectif : ${money(p.budget)}</div>
+      <div class="progress-sub">Objectif : ${money(p.budget, true)}</div>
       ${p.collecte > 0
-        ? `<div class="progress-sub">Reste à collecter : ${money(Math.max(0, p.budget - p.collecte))}</div>`
+        ? `<div class="progress-sub">Reste à collecter : ${money(Math.max(0, p.budget - p.collecte), true)}</div>`
         : '<div class="progress-sub first">Soyez le premier à donner !</div>'}`;
   };
 
-  // « Avec 5 € (3 280 F CFA), un enfant reçoit… »
+  // « Environ 10 € (6 600 F CFA) suffisent pour qu'un habitant… »
   const exemple = (p) => p.exemple
-    ? `<p class="exemple">${icon("gift", "icon icon-sm")}<span>Avec ${money(p.exemple.montant)}, ${esc(p.exemple.texte)}.</span></p>`
+    ? `<p class="exemple">${icon("gift", "icon icon-sm")}<span>Environ ${amount(p.exemple.montant, true)} suffisent pour ${esc(p.exemple.texte)}.</span></p>`
     : "";
 
-  // « 50 enfants », « 200 habitants »
-  const people = (p) => `${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
+  // « 50 enfants », « 200 habitants » ; pour un projet à venir : « environ 200 habitants »
+  const people = (p, approx = false) => `${approx ? "environ " : ""}${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
 
   // Budget d'un projet = somme de son détail + marge pour les imprévus, arrondi à la dizaine
   const subtotal = (p) => sum(p.detailBudget || [], (l) => l.montant);
@@ -143,12 +151,12 @@
     const reperes = (p.reperes || []).filter((k) => sources[k]);
     return `
       <details class="budget">
-        <summary>Détail du budget et sources des prix</summary>
+        <summary>Détail du budget estimé et sources des prix</summary>
         <table class="expenses">
           <tbody>${rows}
             ${margin > 0 ? `<tr class="imprevus"><td>Imprévus (${p.imprevus} %)</td><td>${money(margin)}</td></tr>` : ""}
           </tbody>
-          <tfoot><tr><td>Total</td><td>${money(p.budget)}</td></tr></tfoot>
+          <tfoot><tr><td>Total estimé</td><td>${money(p.budget)}</td></tr></tfoot>
         </table>
         ${cited.length ? `<ol class="sources">${cited.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ol>` : ""}
         ${reperes.length ? `<p class="budget-note"><strong>Pour comparer :</strong></p><ul class="sources">${reperes.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ul>` : ""}
@@ -389,7 +397,10 @@
   function countUp(el) {
     const target = parseFloat(el.dataset.count) || 0;
     const format = el.dataset.format;
-    const out = (v) => (format === "money" ? money(v) : format === "pct" ? `${Math.round(v)}%` : num(v));
+    const out = (v) => (format === "money" ? money(v)
+      : format === "approx" ? money(v, true)
+      : format === "pct" ? `${Math.round(v)}%`
+      : num(v));
     if (reduceMotion || target === 0) { el.innerHTML = out(target); return; }
     const start = performance.now();
     const duration = 1800;
@@ -432,7 +443,7 @@
         <div class="card-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p)}</p>
+          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p, true)}</p>
           ${progress(p)}
           <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
         </div>
@@ -543,11 +554,11 @@
           <p>${esc(p.description)}</p>
           <ul class="meta-grid">
             ${meta("pin", "Lieu", esc(p.lieu))}
-            ${meta("users", "Bénéficiaires", `${counter(p.beneficiaires)} ${esc(p.unite || "enfants")}`)}
-            ${meta("coin", "Budget nécessaire", counter(p.budget, "money"))}
+            ${meta("users", "Bénéficiaires", `environ ${counter(p.beneficiaires)} ${esc(p.unite || "enfants")}`)}
+            ${meta("coin", "Budget estimé", counter(p.budget, "approx"))}
           </ul>
           ${p.calendrier && p.calendrier.length ? `
-            <h3 class="h-small">${icon("calendar", "icon icon-sm")} Calendrier prévisionnel</h3>
+            <h3 class="h-small">${icon("calendar", "icon icon-sm")} Calendrier prévisionnel <small>(dates indicatives)</small></h3>
             <ol class="timeline">${p.calendrier.map((c, i) => `
               <li data-reveal="left" style="--i:${i + 1}"><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}
             </ol>` : ""}
@@ -694,12 +705,12 @@
     fill("[data-cagnotte-total]", `
       <div class="total-card" data-reveal style="--i:2">
         <div><small>Total collecté</small><strong>${counter(totalCollecte, "money")}</strong></div>
-        <div><small>Objectif total</small><strong>${counter(totalBudget, "money")}</strong></div>
+        <div><small>Objectif total estimé</small><strong>${counter(totalBudget, "approx")}</strong></div>
         <div class="total-progress">
           ${bar(v)}
           <div class="progress-sub"><strong class="pct">${counter(v, "pct")}</strong> de l'objectif atteint.
             ${totalCollecte > 0
-              ? `Reste à collecter : ${money(Math.max(0, totalBudget - totalCollecte))}`
+              ? `Reste à collecter : ${money(Math.max(0, totalBudget - totalCollecte), true)}`
               : '<span class="first">La collecte démarre, soyez parmi les premiers !</span>'}</div>
         </div>
       </div>`);
@@ -710,7 +721,7 @@
         <div class="card-media card-media-thin">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p)}</p>
+          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p, true)}</p>
           ${progress(p)}
           ${exemple(p)}
           <div class="fund-actions">

@@ -549,7 +549,8 @@ a.stat:hover .stat-go { transform: translateX(4px); }
 .meta-grid .icon { color: var(--green); margin-top: 3px; }
 .meta-grid span { display: flex; flex-direction: column; font-weight: 600; }
 .meta-grid small { color: var(--muted); font-weight: 400; font-size: .85rem; }
-.h-small { display: flex; align-items: center; gap: 6px; margin: 22px 0 12px; font-size: 1.05rem; color: var(--blue-dark); }
+.h-small { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 22px 0 12px; font-size: 1.05rem; color: var(--blue-dark); }
+.h-small small { font-family: var(--font-body); font-weight: 400; font-size: .85rem; color: var(--muted); }
 .timeline { list-style: none; padding: 0 0 0 18px; margin: 0; border-left: 2px solid var(--gold); }
 .timeline li { position: relative; display: flex; flex-direction: column; padding: 0 0 14px 14px; }
 .timeline li::before {

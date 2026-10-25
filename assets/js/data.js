@@ -167,7 +167,8 @@ window.SITE = {
   // imprevus = marge en % ajoutée au total des lignes (le budget final est arrondi à la dizaine)
   // reperes = sources de comparaison citées sous le détail du budget (facultatif)
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
-  // exemple = ce que permet un don, affiché sous la barre de collecte
+  // exemple = ce que permet un don, affiché « Environ 10 € suffisent pour … » sur la page Cagnotte
+  // Les budgets et les bénéficiaires des futurs projets s'affichent avec « environ » : ce sont des estimations.
   projetsFuturs: [
     {
       id: "hygiene-soins",
@@ -190,7 +191,7 @@ window.SITE = {
         "Un kit d'hygiène et du savon pour trois mois pour chaque enfant, et trois passages d'un infirmier pour soigner la gale et les plaies.",
       image: "",
       lienDon: "",
-      exemple: { montant: 15, texte: "un enfant reçoit un kit d'hygiène et du savon pour trois mois" },
+      exemple: { montant: 15, texte: "offrir à un enfant un kit d'hygiène et du savon pour trois mois" },
       calendrier: [
         { etape: "Achat des kits et des produits", date: "Janvier 2027" },
         { etape: "Distribution et premiers soins", date: "Février 2027" },
@@ -220,7 +221,7 @@ window.SITE = {
         "Le puits du village est abîmé et ouvert. Des puisatiers le nettoient et le creusent plus profond, puis une margelle et un couvercle protègent l'eau.",
       image: "",
       lienDon: "",
-      exemple: { montant: 10, texte: "un habitant du village a accès à une eau propre" },
+      exemple: { montant: 10, texte: "qu'un habitant du village ait accès à une eau propre" },
       calendrier: [
         { etape: "Visite du puits avec les habitants", date: "Janvier 2027" },
         { etape: "Nettoyage et approfondissement, en fin de saison sèche", date: "Avril 2027" },
@@ -247,7 +248,7 @@ window.SITE = {
         "Des moustiquaires et des nattes avant la saison des pluies, puis des couvertures avant les nuits fraîches.",
       image: "",
       lienDon: "",
-      exemple: { montant: 7, texte: "un enfant dort sous une moustiquaire imprégnée" },
+      exemple: { montant: 7, texte: "qu'un enfant dorme sous une moustiquaire imprégnée" },
       calendrier: [
         { etape: "Recensement des enfants du daara", date: "Avril 2027" },
         { etape: "Moustiquaires et nattes", date: "Juin 2027" },
@@ -281,7 +282,7 @@ window.SITE = {
         "Un puits d'environ 25 mètres, creusé à la main avec des parois en béton, pour un village sans point d'eau proche. Un comité d'habitants est formé pour l'entretenir.",
       image: "",
       lienDon: "",
-      exemple: { montant: 20, texte: "un habitant du village a de l'eau potable près de chez lui" },
+      exemple: { montant: 20, texte: "qu'un habitant du village ait de l'eau potable près de chez lui" },
       calendrier: [
         { etape: "Choix de l'emplacement avec le village", date: "Février 2027" },
         { etape: "Creusement et pose des parois en béton, en saison sèche", date: "Mars à mai 2027" },
