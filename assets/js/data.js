@@ -139,6 +139,7 @@ window.SITE = {
   // unite = "enfants" par défaut, ou "habitants" pour un village
   // detailBudget = calcul interne du budget en euros (non affiché sur le site)
   // imprevus = marge en % ajoutée au total des lignes (le budget final est arrondi à la dizaine)
+  // calendrier = facultatif, à ajouter quand les dates sont fixées : [{ etape: "...", date: "Mars 2027" }]
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
   // Les budgets et les bénéficiaires des futurs projets s'affichent avec « environ » : ce sont des estimations.
   projetsFuturs: [
@@ -163,11 +164,6 @@ window.SITE = {
         "Un kit d'hygiène et du savon pour trois mois pour chaque enfant, et trois passages d'un infirmier pour soigner la gale et les plaies.",
       image: "",
       lienDon: "",
-      calendrier: [
-        { etape: "Achat des kits et des produits", date: "Janvier 2027" },
-        { etape: "Distribution et premiers soins", date: "Février 2027" },
-        { etape: "Deuxième et troisième passages de l'infirmier", date: "Mars et avril 2027" },
-      ],
     },
     {
       id: "reparer-puits",
@@ -192,11 +188,6 @@ window.SITE = {
         "Le puits du village est abîmé et ouvert. Des puisatiers le nettoient et le creusent plus profond, puis une margelle et un couvercle protègent l'eau.",
       image: "",
       lienDon: "",
-      calendrier: [
-        { etape: "Visite du puits avec les habitants", date: "Janvier 2027" },
-        { etape: "Nettoyage et approfondissement, en fin de saison sèche", date: "Avril 2027" },
-        { etape: "Margelle, couvercle et analyse de l'eau", date: "Mai 2027" },
-      ],
     },
     {
       id: "moustiquaires-nattes",
@@ -218,11 +209,6 @@ window.SITE = {
         "Des moustiquaires et des nattes avant la saison des pluies, puis des couvertures avant les nuits fraîches.",
       image: "",
       lienDon: "",
-      calendrier: [
-        { etape: "Recensement des enfants du daara", date: "Avril 2027" },
-        { etape: "Moustiquaires et nattes", date: "Juin 2027" },
-        { etape: "Couvertures avant les nuits fraîches", date: "Novembre 2027" },
-      ],
     },
     {
       id: "construire-puits",
@@ -249,11 +235,6 @@ window.SITE = {
         "Un puits d'environ 25 mètres, creusé à la main avec des parois en béton, pour un village sans point d'eau proche. Un comité d'habitants est formé pour l'entretenir.",
       image: "",
       lienDon: "",
-      calendrier: [
-        { etape: "Choix de l'emplacement avec le village", date: "Février 2027" },
-        { etape: "Creusement et pose des parois en béton, en saison sèche", date: "Mars à mai 2027" },
-        { etape: "Mise en service et comité d'entretien", date: "Juin 2027" },
-      ],
     },
   ],
 
