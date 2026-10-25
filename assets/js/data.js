@@ -14,8 +14,10 @@
  *  - Sans photo, une illustration aux couleurs du projet s'affiche.
  *
  *  ATTENTION : les futurs projets ci-dessous sont des EXEMPLES.
- *  Leurs budgets sont des estimations faites à partir des prix
- *  courants au Sénégal, à vérifier sur place.
+ *  Le budget de chaque projet est calculé tout seul à partir de
+ *  son détail (detailBudget) et de la marge pour les imprévus
+ *  (imprevus, en %). Chaque ligne peut citer une source de prix
+ *  (voir la liste « sources » plus bas). Prix à vérifier sur place.
  *  Tant que demo vaut true, un bandeau l'indique sur le site.
  * ============================================================
  */
@@ -144,11 +146,51 @@ window.SITE = {
     { nom: "Prénom Nom", role: "Responsable des projets" },
   ],
 
+  // ---------- SOURCES DES PRIX ----------
+  // Citées dans le détail des budgets (champ source de chaque ligne).
+  sources: {
+    riz: {
+      texte: "Riz brisé ordinaire : 300 F CFA le kilo à Dakar depuis le 6 janvier 2026 (Primature du Sénégal).",
+      lien: "https://www.primature.sn/publications/communiques-officiels/baisse-du-prix-du-riz-ordinaire-brise",
+    },
+    huile: {
+      texte: "Huile raffinée : prix officiel de 1 000 F CFA la bouteille au détail, fixé en juin 2024 (Conseil national de la consommation). Les prix des marchés sont souvent plus élevés, nous comptons 1 300 F CFA le litre.",
+      lien: "https://www.ndarinfo.com/Pain-ciment-riz-huile-Les-prix-officiels-devoiles-par-le-Conseil-national-de-la-consommation_a38485.html",
+    },
+    ciment: {
+      texte: "Ciment : 3 550 F CFA le sac au prix distributeur fixé en juin 2024 (Conseil national de la consommation). Plus cher dans les régions éloignées, nous comptons 4 000 F CFA le sac.",
+      lien: "https://www.ndarinfo.com/Pain-ciment-riz-huile-Les-prix-officiels-devoiles-par-le-Conseil-national-de-la-consommation_a38485.html",
+    },
+    gaz: {
+      texte: "Bouteille de gaz butane de 6 kg : 2 885 F CFA depuis le 6 décembre 2025 (Commission de régulation du secteur de l'énergie).",
+      lien: "https://fr.allafrica.com/stories/202512080378.html",
+    },
+    smig: {
+      texte: "Salaire minimum (SMIG) : 370,526 F CFA de l'heure depuis le 1er juillet 2023, soit environ 3 000 F CFA pour une journée de 8 heures. Nous comptons 5 000 F CFA par jour pour une cuisinière et 7 500 F CFA pour un puisatier, ouvrier qualifié.",
+      lien: "https://support.payspace.com/portal/en/kb/articles/senegal-increase-in-transport-allowance-and-smig",
+    },
+    moustiquaire: {
+      texte: "Moustiquaire imprégnée : environ 2 dollars pièce en achat groupé par les grandes organisations (Against Malaria Foundation). Achetée sur place en petite quantité, elle coûte plus cher, nous comptons 4 500 F CFA.",
+      lien: "https://www.againstmalaria.com/DollarsPerNet.aspx",
+    },
+    puitsUnicef: {
+      texte: "Puits creusé à la main avec parois en béton : de 2 500 à 10 000 dollars selon le terrain, 1 à 3 mois de travaux, en saison sèche uniquement (UNICEF et Practica, note technique n° 3, 2009).",
+      lien: "https://www.ri.org//content/uploads/2019/08/Selection-of-Well-Construction-Methods.pdf",
+    },
+    puitsAsso: {
+      texte: "Exemple d'une autre association : 850 € par puits villageois simple au Sénégal, matériel, transport et équipe de 5 puisatiers compris (Vie Sans Frontières).",
+      lien: "https://www.helloasso.com/associations/vie-sans-frontieres/collectes/we-care-about-water",
+    },
+  },
+
   // ---------- 2. FUTURS PROJETS (alimentent aussi la cagnotte) ----------
   // cause = "talibes" ou "eau" (sert aux filtres des pages Projets et Cagnotte)
   // unite = "enfants" par défaut, ou "habitants" pour un village
+  // detailBudget = lignes du budget en euros ; source = clé de la liste « sources » ci-dessus
+  // imprevus = marge en % ajoutée au total des lignes (le budget final est arrondi à la dizaine)
+  // reperes = sources de comparaison citées sous le détail du budget (facultatif)
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
-  // exemple = ce que permet un petit don, affiché sous la barre de collecte
+  // exemple = ce que permet un don, affiché sous la barre de collecte
   projetsFuturs: [
     {
       id: "repas-vendredi",
@@ -157,14 +199,23 @@ window.SITE = {
       lieu: "Dakar",
       type: "Repas",
       beneficiaires: 50,
-      // 12 repas x 20 000 F CFA (environ 400 F CFA par enfant) = 240 000 F CFA, soit 366 €
-      budget: 370,
+      imprevus: 15,
+      detailBudget: [
+        { poste: "Riz : 130 kg à 300 F CFA le kilo", montant: 60, source: "riz" },
+        { poste: "Poisson ou poulet : 6 kg par repas à 2 500 F CFA le kilo", montant: 300 },
+        { poste: "Légumes, oignons, tomate et épices : 6 000 F CFA par repas", montant: 120 },
+        { poste: "Huile : 1,5 litre par repas", montant: 40, source: "huile" },
+        { poste: "Gaz : une bouteille de 6 kg par repas", montant: 60, source: "gaz" },
+        { poste: "Cuisinière et aide : 5 000 F CFA chacune par repas", montant: 200, source: "smig" },
+        { poste: "Marmites, bols et louches (achat unique)", montant: 95 },
+        { poste: "Transport et suivi par un bénévole", montant: 65 },
+      ],
       collecte: 0,
       description:
-        "Un repas chaud (riz, poisson et légumes) chaque vendredi pendant trois mois pour les 50 enfants d'un daara. Le repas est préparé sur place par une cuisinière du quartier.",
+        "Un repas chaud (riz, poisson ou poulet, légumes) chaque vendredi pendant trois mois, soit 13 repas, pour les 50 enfants d'un daara. Le repas est préparé sur place par une cuisinière du quartier.",
       image: "",
       lienDon: "", // lien spécifique à ce projet (sinon lien principal)
-      exemple: { montant: 5, texte: "un enfant reçoit un repas chaud chaque vendredi pendant deux mois" },
+      exemple: { montant: 10, texte: "un enfant reçoit un repas chaud chaque vendredi pendant un mois et demi" },
       calendrier: [
         { etape: "Choix du daara et de la cuisinière", date: "Décembre 2026" },
         { etape: "Un repas chaud chaque vendredi", date: "Janvier à mars 2027" },
@@ -179,16 +230,22 @@ window.SITE = {
       type: "Eau potable",
       beneficiaires: 200,
       unite: "habitants",
-      // Puisatiers (curage et approfondissement) 120 000 + réparation des parois 50 000
-      // + ciment, fer, sable et gravier 90 000 + couvercle et poulie 60 000
-      // + transport 20 000 + analyse de l'eau 15 000 = 355 000 F CFA, soit 541 €
-      budget: 550,
+      imprevus: 20,
+      detailBudget: [
+        { poste: "Puisatiers : 4 ouvriers pendant 15 jours à 7 500 F CFA par jour", montant: 690, source: "smig" },
+        { poste: "Location d'une motopompe pour vider et nettoyer le puits", montant: 95 },
+        { poste: "Ciment : 25 sacs à 4 000 F CFA", montant: 155, source: "ciment" },
+        { poste: "Fer à béton, sable et gravier", montant: 215 },
+        { poste: "Margelle, dalle, couvercle métallique et poulie", montant: 230 },
+        { poste: "Transport des matériaux et de l'équipe", montant: 155 },
+        { poste: "Désinfection du puits et analyse de l'eau en laboratoire", montant: 95 },
+      ],
       collecte: 0,
       description:
-        "Le puits du village est abîmé et ouvert, et l'eau baisse à la saison sèche. Des puisatiers le nettoient et le creusent plus profond, puis une margelle en béton et un couvercle protègent l'eau des saletés et des animaux.",
+        "Le puits du village est abîmé et ouvert, et l'eau baisse à la saison sèche. Des puisatiers le vident, le nettoient et le creusent plus profond, puis une margelle en béton et un couvercle protègent l'eau des saletés et des animaux.",
       image: "",
       lienDon: "",
-      exemple: { montant: 3, texte: "un habitant du village a accès à une eau propre" },
+      exemple: { montant: 10, texte: "un habitant du village a accès à une eau propre" },
       calendrier: [
         { etape: "Visite du puits avec les habitants", date: "Janvier 2027" },
         { etape: "Nettoyage et approfondissement, en fin de saison sèche", date: "Avril 2027" },
@@ -202,19 +259,25 @@ window.SITE = {
       lieu: "Thiès",
       type: "Santé et hygiène",
       beneficiaires: 50,
-      // 50 kits x 3 000 F CFA + soins de la gale 75 000 + infirmier 20 000 + bassines et seaux 15 000
-      // = 260 000 F CFA, soit 396 €
-      budget: 400,
+      imprevus: 15,
+      detailBudget: [
+        { poste: "Kits d'hygiène : savon, brosse à dents, dentifrice, serviette, coupe-ongles (5 000 F CFA le kit)", montant: 385 },
+        { poste: "Savon pour trois mois : un savon par enfant et par semaine", montant: 325 },
+        { poste: "Médicaments contre la gale et pour les plaies", montant: 230 },
+        { poste: "Infirmier : trois passages au daara", montant: 115 },
+        { poste: "Bassines, seaux, bouilloires et poubelles", montant: 95 },
+        { poste: "Transport et suivi par un bénévole", montant: 65 },
+      ],
       collecte: 0,
       description:
-        "Un kit pour chaque enfant (savon, brosse à dents, dentifrice, serviette), des bassines et des seaux pour le daara, et le passage d'un infirmier pour soigner la gale et les plaies.",
+        "Un kit pour chaque enfant (savon, brosse à dents, dentifrice, serviette), du savon pour trois mois, des bassines et des seaux pour le daara, et trois passages d'un infirmier pour soigner la gale et les plaies.",
       image: "",
       lienDon: "",
-      exemple: { montant: 5, texte: "vous offrez un kit d'hygiène complet à un enfant" },
+      exemple: { montant: 15, texte: "un enfant reçoit un kit d'hygiène et du savon pour trois mois" },
       calendrier: [
         { etape: "Achat des kits et des produits", date: "Janvier 2027" },
         { etape: "Distribution et premiers soins", date: "Février 2027" },
-        { etape: "Deuxième passage de l'infirmier", date: "Mars 2027" },
+        { etape: "Deuxième et troisième passages de l'infirmier", date: "Mars et avril 2027" },
       ],
     },
     {
@@ -225,42 +288,57 @@ window.SITE = {
       type: "Eau potable",
       beneficiaires: 300,
       unite: "habitants",
-      // Puits creusé à la main (environ 15 à 20 m) : équipe de puisatiers 250 000
-      // + ciment 160 000 + fer à béton 80 000 + sable et gravier 60 000 + buses 70 000
-      // + margelle, couvercle et poulie 70 000 + transport 60 000 + analyse de l'eau 15 000
-      // = 765 000 F CFA, soit 1 166 €. Plus cher si la nappe d'eau est profonde.
-      budget: 1200,
+      imprevus: 20,
+      detailBudget: [
+        { poste: "Équipe de 5 puisatiers pendant 40 jours à 7 500 F CFA par jour", montant: 2290, source: "smig" },
+        { poste: "Ciment : 120 sacs à 4 000 F CFA pour les parois et la margelle", montant: 735, source: "ciment" },
+        { poste: "Fer à béton", montant: 385 },
+        { poste: "Sable et gravier", montant: 305 },
+        { poste: "Location des moules et de l'outillage", montant: 230 },
+        { poste: "Margelle, couvercle, poulie, seaux et cordes", montant: 230 },
+        { poste: "Transport des matériaux et de l'équipe", montant: 385 },
+        { poste: "Analyse de l'eau en laboratoire", montant: 80 },
+        { poste: "Formation du comité d'entretien et caisse pour les réparations", montant: 95 },
+      ],
+      // Repères de coût cités sous le détail du budget
+      reperes: ["puitsUnicef", "puitsAsso"],
       collecte: 0,
       description:
-        "Un village sans point d'eau proche. Une équipe de puisatiers creuse un puits à la main, avec des parois en béton, une margelle et un couvercle. Un comité d'habitants est formé pour l'entretenir.",
+        "Un village sans point d'eau proche. Une équipe de puisatiers creuse un puits à la main d'environ 25 mètres, avec des parois en béton, une margelle et un couvercle. Un comité d'habitants est formé pour l'entretenir. Si l'eau est plus profonde que prévu, le coût augmente : c'est pour cela que la marge pour les imprévus est de 20 %.",
       image: "",
       lienDon: "",
-      exemple: { montant: 4, texte: "un habitant du village a de l'eau potable près de chez lui" },
+      exemple: { montant: 20, texte: "un habitant du village a de l'eau potable près de chez lui" },
       calendrier: [
         { etape: "Choix de l'emplacement avec le village", date: "Février 2027" },
-        { etape: "Creusement et pose des parois en béton", date: "Mars à mai 2027" },
+        { etape: "Creusement et pose des parois en béton, en saison sèche", date: "Mars à mai 2027" },
         { etape: "Mise en service et comité d'entretien", date: "Juin 2027" },
       ],
     },
     {
       id: "moustiquaires-nattes",
       cause: "talibes",
-      titre: "Moustiquaires et nattes",
+      titre: "Moustiquaires, nattes et couvertures",
       lieu: "Saint-Louis",
       type: "Couchage",
       beneficiaires: 40,
-      // 40 moustiquaires x 3 500 F CFA + 20 nattes x 3 000 F CFA = 200 000 F CFA, soit 305 €
-      budget: 310,
+      imprevus: 15,
+      detailBudget: [
+        { poste: "Moustiquaires imprégnées : 40 à 4 500 F CFA", montant: 275, source: "moustiquaire" },
+        { poste: "Nattes : 20 à 5 000 F CFA (une pour deux enfants)", montant: 155 },
+        { poste: "Couvertures : 40 à 4 000 F CFA", montant: 245 },
+        { poste: "Cordes, crochets et installation", montant: 35 },
+        { poste: "Transport et suivi par un bénévole", montant: 65 },
+      ],
       collecte: 0,
       description:
-        "40 moustiquaires imprégnées et 20 nattes neuves pour un daara, avant la saison des pluies, période où le paludisme progresse.",
+        "40 moustiquaires imprégnées et 20 nattes avant la saison des pluies, période où le paludisme progresse, puis 40 couvertures avant les nuits fraîches de l'hiver.",
       image: "",
       lienDon: "",
-      exemple: { montant: 6, texte: "un enfant dort sous une moustiquaire imprégnée" },
+      exemple: { montant: 7, texte: "un enfant dort sous une moustiquaire imprégnée" },
       calendrier: [
         { etape: "Recensement des enfants du daara", date: "Avril 2027" },
-        { etape: "Achat et distribution", date: "Juin 2027" },
-        { etape: "Vérification sur place", date: "Septembre 2027" },
+        { etape: "Moustiquaires et nattes", date: "Juin 2027" },
+        { etape: "Couvertures avant les nuits fraîches", date: "Novembre 2027" },
       ],
     },
   ],

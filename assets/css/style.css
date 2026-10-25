@@ -606,6 +606,29 @@ p { margin: 0 0 1em; }
   background: var(--white); border: 3px solid var(--green);
 }
 .timeline strong { color: var(--green); font-size: .92rem; }
+/* Détail du budget (dépliable) */
+.budget { margin-top: 22px; padding: 0 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
+.budget summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 0;
+  list-style: none; cursor: pointer; font-family: var(--font-title); font-weight: 600; color: var(--blue-dark);
+}
+.budget summary::-webkit-details-marker { display: none; }
+.budget summary::after {
+  content: ""; flex-shrink: 0; width: 9px; height: 9px; margin-right: 4px;
+  border-right: 2px solid var(--green); border-bottom: 2px solid var(--green);
+  transform: rotate(45deg); transition: transform .3s var(--ease);
+}
+.budget[open] summary::after { transform: rotate(-135deg); }
+.budget[open] > :not(summary) { animation: rise .4s var(--ease); }
+.budget .expenses td:first-child { padding-right: 12px; }
+.budget .imprevus td { color: var(--gold-dark); font-weight: 600; }
+.budget sup { margin-left: 3px; font-size: .72em; font-weight: 700; color: var(--green); }
+.sources { margin: 14px 0 0; padding-left: 20px; font-size: .85rem; color: var(--muted); }
+.sources li { margin-bottom: 6px; }
+.sources a { color: var(--muted); }
+.budget-note { margin: 12px 0 16px; font-size: .85rem; color: var(--muted); }
+.budget-note + .sources { margin-top: -8px; }
+
 .pd-funding { margin-top: 22px; padding: 22px; background: var(--gold-soft); border-radius: 16px; }
 .pd-funding .btn { margin-top: 18px; width: 100%; }
 @media (min-width: 560px) { .pd-funding .btn { width: auto; } }

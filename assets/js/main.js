@@ -118,6 +118,47 @@
   // « 50 enfants », « 200 habitants »
   const people = (p) => `${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
 
+  // Budget d'un projet = somme de son détail + marge pour les imprévus, arrondi à la dizaine
+  const subtotal = (p) => sum(p.detailBudget || [], (l) => l.montant);
+  S.projetsFuturs.forEach((p) => {
+    if (p.detailBudget && p.detailBudget.length) {
+      p.budget = Math.round((subtotal(p) * (1 + (p.imprevus || 0) / 100)) / 10) * 10;
+    }
+  });
+
+  const sourceLink = (s) => s.lien
+    ? `<a href="${esc(s.lien)}" target="_blank" rel="noopener">${esc(s.texte)}</a>`
+    : esc(s.texte);
+
+  // Tableau dépliable : lignes du budget, imprévus, total et sources numérotées
+  const budgetTable = (p) => {
+    const lines = p.detailBudget || [];
+    if (!lines.length) return "";
+    const sources = S.sources || {};
+    const cited = [];
+    const ref = (key) => {
+      if (!key || !sources[key]) return "";
+      if (!cited.includes(key)) cited.push(key);
+      return `<sup>${cited.indexOf(key) + 1}</sup>`;
+    };
+    const rows = lines.map((l) => `<tr><td>${esc(l.poste)}${ref(l.source)}</td><td>${money(l.montant)}</td></tr>`).join("");
+    const margin = p.budget - subtotal(p);
+    const reperes = (p.reperes || []).filter((k) => sources[k]);
+    return `
+      <details class="budget">
+        <summary>Détail du budget et sources des prix</summary>
+        <table class="expenses">
+          <tbody>${rows}
+            ${margin > 0 ? `<tr class="imprevus"><td>Imprévus (${p.imprevus} %)</td><td>${money(margin)}</td></tr>` : ""}
+          </tbody>
+          <tfoot><tr><td>Total</td><td>${money(p.budget)}</td></tr></tfoot>
+        </table>
+        ${cited.length ? `<ol class="sources">${cited.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ol>` : ""}
+        ${reperes.length ? `<p class="budget-note"><strong>Pour comparer :</strong></p><ul class="sources">${reperes.map((k) => `<li>${sourceLink(sources[k])}</li>`).join("")}</ul>` : ""}
+        <p class="budget-note">Les lignes sans numéro sont des estimations, à vérifier sur place avec des devis.</p>
+      </details>`;
+  };
+
   const statItems = (items) => items.map(([value, label, format], i) => `
       <div class="stat" data-reveal style="--i:${i}"><strong>${counter(value, format)}</strong><span>${label}</span></div>`).join("");
 
@@ -524,6 +565,7 @@
             <ol class="timeline">${p.calendrier.map((c, i) => `
               <li data-reveal="left" style="--i:${i + 1}"><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}
             </ol>` : ""}
+          ${budgetTable(p)}
           <div class="pd-funding">
             ${progress(p)}
             ${exemple(p)}
