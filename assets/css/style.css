@@ -324,10 +324,15 @@ p { margin: 0 0 1em; }
 @keyframes breathe { 50% { transform: scale(1.18); } }
 .mission-card p { font-size: 1.18rem; margin: 0; }
 
-/* Qui sont les enfants talibés ? */
-.talibes { display: grid; gap: 36px; }
-@media (min-width: 900px) { .talibes { grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: start; } }
-.talibes-text p { font-size: 1.08rem; }
+/* Les causes : enfants talibés, eau potable */
+.cause { display: grid; gap: 36px; }
+@media (min-width: 900px) {
+  .cause { grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: start; }
+  .cause-reverse .cause { grid-template-columns: 1.1fr 1fr; }
+  .cause-reverse .cause-text { order: 2; }
+}
+.cause-text p { font-size: 1.08rem; }
+.section:not(.section-alt) .fact { background: var(--white); }
 .facts { display: grid; gap: 14px; }
 .fact {
   padding: 22px 24px; border-radius: 18px; background: var(--bg); border-left: 5px solid var(--gold);
@@ -419,6 +424,17 @@ p { margin: 0 0 1em; }
 @media (min-width: 640px) { .carousel-track { grid-auto-columns: calc((100% - 28px) / 2); } }
 @media (min-width: 1000px) { .carousel-track { grid-auto-columns: calc((100% - 48px) / 3); } }
 .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 16px; }
+
+/* Filtres par cause (pages Projets et Cagnotte) */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+.filter {
+  padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line); cursor: pointer;
+  background: var(--white); color: var(--ink); font-family: var(--font-title); font-weight: 600; font-size: .95rem;
+  transition: background .25s, color .25s, border-color .25s;
+}
+.filter:hover { border-color: var(--green); color: var(--green); }
+.filter[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: var(--white); }
+.is-filtered-in { animation: rise .45s var(--ease); }
 .carousel.is-static .carousel-nav { display: none; }
 .car-btn {
   width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer;

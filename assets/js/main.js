@@ -115,6 +115,9 @@
     ? `<p class="exemple">${icon("gift", "icon icon-sm")}<span>Avec ${money(p.exemple.montant)}, ${esc(p.exemple.texte)}.</span></p>`
     : "";
 
+  // « 50 enfants », « 200 habitants »
+  const people = (p) => `${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
+
   const statItems = (items) => items.map(([value, label, format], i) => `
       <div class="stat" data-reveal style="--i:${i}"><strong>${counter(value, format)}</strong><span>${label}</span></div>`).join("");
 
@@ -387,7 +390,7 @@
         <div class="card-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${num(p.beneficiaires)} enfants</p>
+          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p)}</p>
           ${progress(p)}
           <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
         </div>
@@ -408,23 +411,30 @@
 
     fill("[data-stats]", statItems([
       [realises.length, "projets réalisés"],
-      [sum(realises, (p) => p.beneficiaires), "enfants aidés"],
+      [sum(realises, (p) => p.beneficiaires), "personnes aidées"],
       [futurs.length, "projets en préparation"],
-      [S.zones.length, "villes d'intervention"],
+      [S.zones.length, "zones d'intervention"],
     ]));
 
-    const t = S.talibes;
-    if (t) {
-      fill("[data-talibes-intro]", esc(t.intro));
-      fill("[data-talibes-chiffres]", t.chiffres.map((c, i) => `
-        <div class="fact" data-reveal style="--i:${i}">
-          <strong>${esc(c.valeur)}</strong>
-          <p>${esc(c.texte)}</p>
-        </div>`).join(""));
-      fill("[data-talibes-source]", t.source.lien
-        ? `<a href="${esc(t.source.lien)}" target="_blank" rel="noopener">${esc(t.source.texte)}</a>`
-        : esc(t.source.texte));
-    }
+    // Une section par cause : texte, chiffres clés et source
+    $$("[data-cause-section]").forEach((section) => {
+      const c = S.causes[section.dataset.causeSection];
+      if (!c) { section.remove(); return; }
+      fill(`[data-cause-section="${section.dataset.causeSection}"] [data-cause-content]`, `
+        <div class="cause-text" data-reveal="left">
+          <h2>${esc(c.titre)}</h2>
+          <p>${esc(c.intro)}</p>
+          <p class="facts-source">${c.source.lien
+            ? `<a href="${esc(c.source.lien)}" target="_blank" rel="noopener">${esc(c.source.texte)}</a>`
+            : esc(c.source.texte)}</p>
+        </div>
+        <div class="facts">${c.chiffres.map((f, i) => `
+          <div class="fact" data-reveal style="--i:${i}">
+            <strong>${esc(f.valeur)}</strong>
+            <p>${esc(f.texte)}</p>
+          </div>`).join("")}
+        </div>`);
+    });
 
     fill("[data-domaines]", S.domaines.map((d, i) => `
       <article class="domain-card" data-reveal style="--i:${i}">
@@ -470,10 +480,35 @@
   const meta = (name, label, value) =>
     `<li>${icon(name)}<span><small>${label}</small>${value}</span></li>`;
 
+  // Boutons « Tous les projets / Enfants talibés / Eau potable »
+  function setupFilters() {
+    const bar = $("[data-filters]");
+    if (!bar || !S.causes) return;
+    const options = [["all", "Tous les projets"], ...Object.entries(S.causes).map(([key, c]) => [key, c.nom])];
+    bar.innerHTML = options.map(([key, label], i) =>
+      `<button class="filter" data-cause="${esc(key)}" aria-pressed="${i === 0}">${esc(label)}</button>`).join("");
+    bar.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter");
+      if (!btn) return;
+      $$(".filter", bar).forEach((b) => b.setAttribute("aria-pressed", b === btn));
+      const key = btn.dataset.cause;
+      $$("[data-cause-item]").forEach((el) => {
+        const show = key === "all" || el.dataset.causeItem === key;
+        el.hidden = !show;
+        if (show && !reduceMotion) {
+          el.classList.remove("is-filtered-in");
+          void el.offsetWidth; // relance l'animation
+          el.classList.add("is-filtered-in");
+        }
+      });
+    });
+  }
+
   function renderFuturs() {
     const list = S.projetsFuturs;
+    setupFilters();
     fill("[data-futurs]", list.length ? list.map((p, n) => `
-      <article class="project-detail" id="${esc(p.id)}" data-reveal>
+      <article class="project-detail" id="${esc(p.id)}" data-cause-item="${esc(p.cause || "")}" data-reveal>
         <div class="pd-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span><span class="pd-index">${String(n + 1).padStart(2, "0")}</span></div>
         <div class="pd-body">
           <h2>${esc(p.titre)}</h2>
@@ -481,7 +516,7 @@
           <ul class="meta-grid">
             ${meta("pin", "Lieu", esc(p.lieu))}
             ${meta("tag", "Type de projet", esc(p.type))}
-            ${meta("users", "Enfants concernés", counter(p.beneficiaires))}
+            ${meta("users", "Bénéficiaires", `${counter(p.beneficiaires)} ${esc(p.unite || "enfants")}`)}
             ${meta("coin", "Budget nécessaire", counter(p.budget, "money"))}
           </ul>
           ${p.calendrier && p.calendrier.length ? `
@@ -518,7 +553,7 @@
       <ul class="coming-steps">
         <li data-reveal style="--i:1">${icon("camera")}<strong>Les photos</strong><span>Avant, pendant et après chaque projet.</span></li>
         <li data-reveal style="--i:2">${icon("coin")}<strong>Les dépenses</strong><span>Le détail de chaque somme dépensée.</span></li>
-        <li data-reveal style="--i:3">${icon("target")}<strong>Le résultat</strong><span>Ce qui a changé pour les enfants.</span></li>
+        <li data-reveal style="--i:3">${icon("target")}<strong>Le résultat</strong><span>Ce qui a changé pour les enfants et les villages.</span></li>
       </ul>
       <div class="actions-center">
         <a class="btn btn-green" href="projets.html">Voir les futurs projets</a>
@@ -536,7 +571,7 @@
 
     fill("[data-realises-stats]", statItems([
       [list.length, "projets terminés"],
-      [sum(list, (p) => p.beneficiaires), "enfants aidés"],
+      [sum(list, (p) => p.beneficiaires), "personnes aidées"],
       [sum(list, (p) => sum(p.depenses, (d) => d.montant)), "dépensés sur le terrain", "money"],
     ]));
 
@@ -562,7 +597,7 @@
             <p class="muted meta-line">
               <span>${icon("pin", "icon icon-sm")} ${esc(p.lieu)}</span>
               <span>${icon("calendar", "icon icon-sm")} ${esc(p.date)}</span>
-              <span>${icon("users", "icon icon-sm")} ${num(p.beneficiaires)} enfants</span>
+              <span>${icon("users", "icon icon-sm")} ${people(p)}</span>
             </p>
           </header>
           <div class="real-grid">
@@ -642,12 +677,13 @@
         </div>
       </div>`);
 
+    setupFilters();
     fill("[data-cagnotte]", list.map((p, i) => `
-      <article class="card fund-card" data-reveal style="--i:${i}">
+      <article class="card fund-card" data-cause-item="${esc(p.cause || "")}" data-reveal style="--i:${i}">
         <div class="card-media card-media-thin">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${num(p.beneficiaires)} enfants</p>
+          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p)}</p>
           ${progress(p)}
           ${exemple(p)}
           <div class="fund-actions">
