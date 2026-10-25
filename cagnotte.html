@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La cagnotte — Empreinte d'Espoir</title>
+  <meta name="description" content="Soutenez nos projets : montant nécessaire, fonds déjà collectés et avancement de chaque collecte.">
+  <meta property="og:title" content="La cagnotte — Empreinte d'Espoir">
+  <meta property="og:description" content="Soutenez nos projets : montant nécessaire, fonds déjà collectés et avancement de chaque collecte.">
+  <meta name="theme-color" content="#1d4f91">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="cagnotte">
+  <a class="skip" href="#main">Aller au contenu</a>
+  <div data-header></div>
+  <main id="main">
+    <section class="hero page-hero">
+      <div class="container">
+        <span class="eyebrow">La cagnotte</span>
+        <h1>Chaque don nous rapproche de l'objectif</h1>
+        <p class="lead">Choisissez le projet que vous souhaitez soutenir et suivez l'avancement de la collecte.</p>
+        <div data-cagnotte-total></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Collectes en cours</span>
+          <h2>Choisissez votre projet</h2>
+        </div>
+        <div class="grid-cards" data-cagnotte></div>
+      </div>
+    </section>
+    <section class="section section-alt" id="moyens">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Comment donner</span>
+          <h2>Les moyens de paiement</h2>
+          <p class="muted">Précisez le nom du projet dans le motif de votre don pour qu'il lui soit affecté.</p>
+        </div>
+        <div class="ways" data-moyens></div>
+        <div class="trust">
+          <div><strong>Transparence totale</strong>Chaque dépense est publiée dans nos réalisations.</div>
+          <div><strong>Paiement sécurisé</strong>Les paiements en ligne passent par une plateforme certifiée.</div>
+          <div><strong>Suivi en direct</strong>L'avancement de chaque collecte est mis à jour sur cette page.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div data-footer></div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
