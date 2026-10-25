@@ -40,12 +40,9 @@
     health: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
     bowl: '<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 7c0-1.5 1-2 1-3.5M12 7c0-1.5 1-2 1-3.5M16 7c0-1.5 1-2 1-3.5"/>',
     home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-    tool: '<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 1.3-1.3a4 4 0 0 0-5-5L3 8l3-3 3 3 1.3-1.3a4 4 0 0 0 4.4-.4z"/>',
     camera: '<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/>',
     pin: '<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
     users: '<circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20a7 7 0 0 0-4-6.3"/>',
-    tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
     calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
     coin: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>',
     gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8"/><path d="M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5M12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5"/>',
@@ -159,8 +156,13 @@
       </details>`;
   };
 
-  const statItems = (items) => items.map(([value, label, format], i) => `
-      <div class="stat" data-reveal style="--i:${i}"><strong>${counter(value, format)}</strong><span>${label}</span></div>`).join("");
+  // Chiffres clés ; avec un lien, la case entière est cliquable
+  const statItems = (items) => items.map(([value, label, format, href], i) => {
+    const content = `<strong>${counter(value, format)}</strong><span>${label}${href ? icon("right", "icon stat-go") : ""}</span>`;
+    return href
+      ? `<a class="stat" href="${href}" data-reveal style="--i:${i}">${content}</a>`
+      : `<div class="stat" data-reveal style="--i:${i}">${content}</div>`;
+  }).join("");
 
   // ---------- En-tête, pied de page, décors ----------
   const NAV = [
@@ -401,11 +403,10 @@
 
   // Apparitions au défilement, compteurs, barres de progression
   function animateOnScroll() {
-    const targets = $$("[data-reveal], [data-count], .progress, .steps");
+    const targets = $$("[data-reveal], [data-count], .progress");
     const run = (el) => {
       if (el.matches("[data-count]")) countUp(el);
       if (el.matches(".progress")) el.classList.add("is-filled");
-      if (el.matches(".steps")) el.classList.add("is-drawn");
       if (el.matches("[data-reveal]")) {
         el.classList.add("is-visible");
         // Une fois apparu, on retire l'attribut pour que les effets de survol n'héritent pas du délai
@@ -451,10 +452,10 @@
       `<div class="float-chip c${i + 1}">${icon(d.icone)}<span>${esc(d.nom)}</span></div>`).join(""));
 
     fill("[data-stats]", statItems([
-      [realises.length, "projets réalisés"],
-      [sum(realises, (p) => p.beneficiaires), "personnes aidées"],
-      [futurs.length, "projets en préparation"],
-      [S.zones.length, "zones d'intervention"],
+      [realises.length, "projets réalisés", "num", "realisations.html"],
+      [sum(realises, (p) => p.beneficiaires), "personnes aidées", "num", "realisations.html"],
+      [futurs.length, "projets en préparation", "num", "projets.html"],
+      [S.zones.length, "zones d'intervention", "num", "#organisation"],
     ]));
 
     // Une section par cause : texte, chiffres clés et source
@@ -477,13 +478,6 @@
         </div>`);
     });
 
-    fill("[data-domaines]", S.domaines.map((d, i) => `
-      <article class="domain-card" data-reveal style="--i:${i}">
-        <div class="domain-icon">${icon(d.icone)}</div>
-        <h3>${esc(d.nom)}</h3>
-        <p>${esc(d.texte)}</p>
-      </article>`).join(""));
-
     fill("[data-valeurs]", S.valeurs.map((v, i) => `
       <article class="value-card" data-reveal style="--i:${i}">
         <span class="value-num">${String(i + 1).padStart(2, "0")}</span>
@@ -491,13 +485,6 @@
         <h3>${esc(v.nom)}</h3>
         <p>${esc(v.texte)}</p>
       </article>`).join(""));
-
-    fill("[data-etapes]", S.etapes.map((e, i) => `
-      <li class="step" data-reveal style="--i:${i}">
-        <div class="step-badge">${icon(e.icone)}<span>${i + 1}</span></div>
-        <h3>${esc(e.titre)}</h3>
-        <p>${esc(e.texte)}</p>
-      </li>`).join(""));
 
     fill("[data-apercu]", futurs.map(projectCard).join(""));
 
@@ -556,7 +543,6 @@
           <p>${esc(p.description)}</p>
           <ul class="meta-grid">
             ${meta("pin", "Lieu", esc(p.lieu))}
-            ${meta("tag", "Type de projet", esc(p.type))}
             ${meta("users", "Bénéficiaires", `${counter(p.beneficiaires)} ${esc(p.unite || "enfants")}`)}
             ${meta("coin", "Budget nécessaire", counter(p.budget, "money"))}
           </ul>
@@ -568,7 +554,6 @@
           ${budgetTable(p)}
           <div class="pd-funding">
             ${progress(p)}
-            ${exemple(p)}
             ${donButton(p, "Soutenir ce projet")}
           </div>
         </div>

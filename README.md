@@ -19,7 +19,7 @@ Double-cliquer sur `index.html`, ou lancer `python3 -m http.server` dans ce doss
 ## Mettre à jour le contenu
 
 - **Textes, valeurs, zones, équipe, contacts** : sections correspondantes de `data.js`.
-- **Éléments animés de l'accueil** : `motsHero` (mots qui défilent dans le grand titre), `domaines`, `etapes` (« Comment ça marche ») et `citations` (proverbes qui défilent). Les bandeaux qui défilent reprennent automatiquement les valeurs et les domaines.
+- **Éléments animés de l'accueil** : `motsHero` (mots qui défilent dans le grand titre), `domaines` (étiquettes autour du logo et bandeau doré) et `citations` (proverbes qui défilent). Le bandeau bleu reprend automatiquement les valeurs.
 - **Les deux causes** (enfants talibés, eau potable) : textes, chiffres clés et sources dans `causes`. Elles ont chacune leur section sur l'accueil et leur filtre sur les pages Projets et Cagnotte.
 - **Nouveau projet** : copier un bloc `{ ... }` dans `projetsFuturs` et changer les valeurs (`id` unique, sans espace ni accent). Le champ `cause` vaut `"talibes"` ou `"eau"`, et `unite` vaut `"enfants"` (par défaut) ou `"habitants"`.
 - **Projet terminé** : le retirer de `projetsFuturs` et l'ajouter à `projetsRealises` (un modèle prêt à copier est en commentaire dans `data.js`). Tant que la liste est vide, la page Réalisations affiche « Nos premières réalisations arrivent bientôt ».
