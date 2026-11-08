@@ -51,3 +51,11 @@ Autres options gratuites : [Netlify](https://app.netlify.com/drop) (glisser-dép
 ## Nom de domaine (optionnel)
 
 Pour une adresse comme `empreintedespoir.org`, il faut acheter le domaine chez un registrar (OVH, Gandi, Namecheap…), environ 10 à 15 € par an. C'est le seul coût éventuel. Ensuite : **Settings → Pages → Custom domain** sur GitHub. Le HTTPS reste gratuit.
+
+## Après une modification
+
+Les pages chargent `style.css`, `data.js` et `main.js` avec un numéro de version (`?v=...`). Changer ce numéro dans les 4 fichiers HTML force les navigateurs à charger la nouvelle version au lieu d'une ancienne copie gardée en mémoire. Commande à lancer dans ce dossier avant `git push` :
+
+```bash
+V=$(date +%Y%m%d%H%M); sed -i '' -E "s#\?v=[0-9]+#?v=$V#g" *.html
+```
