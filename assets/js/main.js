@@ -58,6 +58,7 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+    tool: '<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 1.3-1.3a4 4 0 0 0-5-5L3 8l3-3 3 3 1.3-1.3a4 4 0 0 0 4.4-.4z"/>',
     left: '<path d="M15 18l-6-6 6-6"/>',
     right: '<path d="M9 18l6-6-6-6"/>',
     up: '<path d="M12 19V5M5 12l7-7 7 7"/>',
@@ -67,6 +68,7 @@
 
   // Couleur et icône de l'illustration, déduites du type de projet
   const THEMES = [
+    [/r[ée]nov|travaux|daara/i, "tool", "renov"],
     [/aliment|nourri|repas|denr/i, "bowl", "food"],
     [/sant|hygi|m[ée]dic|soin/i, "health", "sante"],
     [/couchage|natte|moustiquaire|abri/i, "home", "couchage"],
@@ -96,35 +98,10 @@
   const counter = (value, format = "num") =>
     `<span data-count="${value || 0}" data-format="${format}">${format === "money" ? money(0) : format === "approx" ? money(0, true) : format === "pct" ? "0%" : "0"}</span>`;
 
-  const bar = (v) => `
-      <div class="progress" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100" aria-label="Avancement de la collecte">
-        <span style="--w:${v}%"></span>
-      </div>`;
-
-  const progress = (p) => {
-    const v = pct(p.collecte, p.budget);
-    return `
-      ${bar(v)}
-      <div class="progress-meta">
-        <span><strong>${counter(p.collecte, "money")}</strong> collectés</span>
-        <span class="pct">${counter(v, "pct")}</span>
-      </div>
-      <div class="progress-sub">Objectif : ${money(p.budget, true)}</div>
-      ${p.collecte > 0
-        ? `<div class="progress-sub">Reste à collecter : ${money(Math.max(0, p.budget - p.collecte), true)}</div>`
-        : '<div class="progress-sub first">Soyez le premier à donner !</div>'}`;
-  };
-
   // « 50 enfants », « 200 habitants » ; pour un projet à venir : « environ 200 habitants »
   const people = (p, approx = false) => `${approx ? "environ " : ""}${num(p.beneficiaires)} ${esc(p.unite || "enfants")}`;
-
-  // Budget d'un projet = somme de son détail + marge pour les imprévus, arrondi à la dizaine
-  const subtotal = (p) => sum(p.detailBudget || [], (l) => l.montant);
-  S.projetsFuturs.forEach((p) => {
-    if (p.detailBudget && p.detailBudget.length) {
-      p.budget = Math.round((subtotal(p) * (1 + (p.imprevus || 0) / 100)) / 10) * 10;
-    }
-  });
+  // Ligne sous le titre d'un projet : lieu (s'il est connu) et bénéficiaires
+  const projectLine = (p, approx) => `${icon("users", "icon icon-sm")} ${[p.lieu && esc(p.lieu), people(p, approx)].filter(Boolean).join(", ")}`;
 
   // Chiffres clés ; avec un lien, la case entière est cliquable
   const statItems = (items) => items.map(([value, label, format, href], i) => {
@@ -153,7 +130,7 @@
     ).join("");
 
     const banner = S.demo
-      ? '<div class="demo-banner">Site en préparation : les projets et les montants affichés sont des exemples.</div>'
+      ? '<div class="demo-banner">Site en préparation : les projets affichés sont des exemples.</div>'
       : "";
 
     $("[data-header]").outerHTML = `
@@ -165,7 +142,7 @@
             <span><strong>${esc(S.nom)}</strong><small>Association</small></span>
           </a>
           <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">${icon("menu")}</button>
-          <nav id="nav" class="nav">${links}${donButton(null, "Faire un don", "btn btn-gold btn-sm btn-glow")}</nav>
+          <nav id="nav" class="nav">${links}${donButton(null, "Faire un don", "btn btn-gold btn-sm")}</nav>
         </div>
       </header>`;
 
@@ -204,7 +181,6 @@
         <div class="container footer-bottom">© ${new Date().getFullYear()} ${esc(S.nom)}. Tous droits réservés.</div>
       </footer>`;
 
-    document.body.insertAdjacentHTML("afterbegin", '<div class="scroll-progress" aria-hidden="true"><span></span></div>');
     document.body.insertAdjacentHTML("beforeend", `<button class="to-top" aria-label="Remonter en haut de la page">${icon("up")}</button>`);
     $$("[data-aurora]").forEach((el) => el.insertAdjacentHTML("afterbegin", AURORA));
     $$(".hero").forEach((el) => el.insertAdjacentHTML("beforeend", WAVE));
@@ -223,13 +199,10 @@
 
   function setupScroll() {
     const header = $(".site-header");
-    const progressBar = $(".scroll-progress span");
     const toTop = $(".to-top");
     let ticking = false;
     const update = () => {
       const y = window.scrollY;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      progressBar.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
       header.classList.toggle("is-scrolled", y > 10);
       toTop.classList.toggle("is-visible", y > 600);
       ticking = false;
@@ -376,10 +349,9 @@
 
   // Apparitions au défilement, compteurs, barres de progression
   function animateOnScroll() {
-    const targets = $$("[data-reveal], [data-count], .progress");
+    const targets = $$("[data-reveal], [data-count]");
     const run = (el) => {
       if (el.matches("[data-count]")) countUp(el);
-      if (el.matches(".progress")) el.classList.add("is-filled");
       if (el.matches("[data-reveal]")) {
         el.classList.add("is-visible");
         // Une fois apparu, on retire l'attribut pour que les effets de survol n'héritent pas du délai
@@ -405,8 +377,7 @@
         <div class="card-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p, true)}</p>
-          ${progress(p)}
+          <p class="muted">${projectLine(p, true)}</p>
           <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
         </div>
       </article>`;
@@ -421,14 +392,10 @@
     fill("[data-organisation]", esc(S.presentation.organisation));
     setupRotator();
 
-    fill("[data-hero-chips]", S.domaines.slice(0, 3).map((d, i) =>
-      `<div class="float-chip c${i + 1}">${icon(d.icone)}<span>${esc(d.nom)}</span></div>`).join(""));
-
     fill("[data-stats]", statItems([
       [realises.length, "projets réalisés", "num", "realisations.html"],
       [sum(realises, (p) => p.beneficiaires), "personnes aidées", "num", "realisations.html"],
       [futurs.length, "projets en préparation", "num", "projets.html"],
-      [S.zones.length, "zones d'intervention", "num", "#organisation"],
     ]));
 
     // Une section par cause : texte, chiffres clés et source
@@ -453,19 +420,12 @@
 
     fill("[data-valeurs]", S.valeurs.map((v, i) => `
       <article class="value-card" data-reveal style="--i:${i}">
-        <span class="value-num">${String(i + 1).padStart(2, "0")}</span>
         <div class="value-icon">${icon(v.icone)}</div>
         <h3>${esc(v.nom)}</h3>
         <p>${esc(v.texte)}</p>
       </article>`).join(""));
 
     fill("[data-apercu]", futurs.map(projectCard).join(""));
-
-    fill("[data-zones]", S.zones.map((z, i) => `
-      <li class="zone" data-reveal="left" style="--i:${i}">
-        <span class="zone-pin">${icon("pin")}</span>
-        <div><strong>${esc(z.nom)}</strong><span>${esc(z.detail)}</span></div>
-      </li>`).join(""));
 
     fill("[data-equipe]", S.equipe.map((m, i) => `
       <li class="member" data-reveal="zoom" style="--i:${i}">
@@ -508,25 +468,21 @@
   function renderFuturs() {
     const list = S.projetsFuturs;
     setupFilters();
-    fill("[data-futurs]", list.length ? list.map((p, n) => `
+    fill("[data-futurs]", list.length ? list.map((p) => `
       <article class="project-detail" id="${esc(p.id)}" data-cause-item="${esc(p.cause || "")}" data-reveal>
-        <div class="pd-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span><span class="pd-index">${String(n + 1).padStart(2, "0")}</span></div>
+        <div class="pd-media">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="pd-body">
           <h2>${esc(p.titre)}</h2>
           <p>${esc(p.description)}</p>
           <ul class="meta-grid">
-            ${meta("pin", "Lieu", esc(p.lieu))}
+            ${p.lieu ? meta("pin", "Lieu", esc(p.lieu)) : ""}
             ${meta("users", "Bénéficiaires", `environ ${counter(p.beneficiaires)} ${esc(p.unite || "enfants")}`)}
-            ${meta("coin", "Budget estimé", counter(p.budget, "approx"))}
           </ul>
           ${p.calendrier && p.calendrier.length ? `
             <h3 class="h-small">${icon("calendar", "icon icon-sm")} Calendrier prévisionnel <small>(dates indicatives)</small></h3>
             <ol class="timeline">${p.calendrier.map((c, i) => `
               <li data-reveal="left" style="--i:${i + 1}"><strong>${esc(c.date)}</strong><span>${esc(c.etape)}</span></li>`).join("")}
             </ol>` : ""}
-          <div class="pd-funding">
-            ${progress(p)}
-          </div>
         </div>
       </article>`).join("") : '<p class="empty">Aucun projet en préparation pour le moment.</p>');
   }
@@ -659,20 +615,11 @@
   // ---------- Page : cagnotte ----------
   function renderCagnotte() {
     const list = S.projetsFuturs;
-    const totalBudget = sum(list, (p) => p.budget);
     const totalCollecte = sum(list, (p) => p.collecte);
-    const v = pct(totalCollecte, totalBudget);
     fill("[data-cagnotte-total]", `
       <div class="total-card" data-reveal style="--i:2">
         <div><small>Total collecté</small><strong>${counter(totalCollecte, "money")}</strong></div>
-        <div><small>Objectif total estimé</small><strong>${counter(totalBudget, "approx")}</strong></div>
-        <div class="total-progress">
-          ${bar(v)}
-          <div class="progress-sub"><strong class="pct">${counter(v, "pct")}</strong> de l'objectif atteint.
-            ${totalCollecte > 0
-              ? `Reste à collecter : ${money(Math.max(0, totalBudget - totalCollecte), true)}`
-              : '<span class="first">La collecte démarre, soyez parmi les premiers !</span>'}</div>
-        </div>
+        <p class="total-note">${totalCollecte > 0 ? "Merci à tous nos donateurs !" : "La collecte démarre, soyez parmi les premiers !"}</p>
         <div class="total-action">${donButton(null, "Faire un don")}</div>
       </div>`);
 
@@ -682,8 +629,7 @@
         <div class="card-media card-media-thin">${visual(p.image, p.titre, p.type)}<span class="chip">${esc(p.type)}</span></div>
         <div class="card-body">
           <h3>${esc(p.titre)}</h3>
-          <p class="muted">${icon("pin", "icon icon-sm")} ${esc(p.lieu)}, ${people(p, true)}</p>
-          ${progress(p)}
+          <p class="muted">${projectLine(p, true)}</p>
           <a class="link-arrow" href="projets.html#${esc(p.id)}">Voir le projet <span aria-hidden="true">→</span></a>
         </div>
       </article>`).join(""));

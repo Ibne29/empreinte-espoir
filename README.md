@@ -18,15 +18,14 @@ Double-cliquer sur `index.html`, ou lancer `python3 -m http.server` dans ce doss
 
 ## Mettre à jour le contenu
 
-- **Textes, valeurs, zones, équipe, contacts** : sections correspondantes de `data.js`.
+- **Textes, valeurs, équipe, contacts** : sections correspondantes de `data.js`.
 - **Éléments animés de l'accueil** : `motsHero` (mots qui défilent dans le grand titre), `domaines` (étiquettes autour du logo et bandeau doré) et `citations` (proverbes qui défilent). Le bandeau bleu reprend automatiquement les valeurs.
 - **Les deux causes** (enfants talibés, eau potable) : textes, chiffres clés et sources dans `causes`. Elles ont chacune leur section sur l'accueil et leur filtre sur les pages Projets et Cagnotte.
 - **Nouveau projet** : copier un bloc `{ ... }` dans `projetsFuturs` et changer les valeurs (`id` unique, sans espace ni accent). Le champ `cause` vaut `"talibes"` ou `"eau"`, et `unite` vaut `"enfants"` (par défaut) ou `"habitants"`.
 - **Projet terminé** : le retirer de `projetsFuturs` et l'ajouter à `projetsRealises` (un modèle prêt à copier est en commentaire dans `data.js`). Tant que la liste est vide, la page Réalisations affiche « Nos premières réalisations arrivent bientôt ».
-- **Montant collecté** : modifier le champ `collecte` du projet. Les compteurs animés, les barres d'avancement, les pourcentages et les totaux se recalculent seuls.
-- **Estimations** : tant qu'un projet est à venir, son budget et son nombre de bénéficiaires s'affichent avec « environ », et la conversion en francs CFA est arrondie. Les montants collectés et les projets réalisés restent exacts.
-- **Euros et francs CFA** : les montants se saisissent en euros et l'équivalent en francs CFA s'affiche à côté (taux fixe : 1 € = 655,957 F CFA). Pour saisir en francs CFA, mettre `devise: "XOF"` : les euros s'afficheront alors à côté.
-- **Budgets** : chaque projet a un `detailBudget` (calcul interne en euros, non affiché) et une marge `imprevus` en %. Le budget total se calcule tout seul.
+- **Montant collecté** : modifier le champ `collecte` du projet. Le total de la cagnotte se recalcule tout seul.
+- **Euros et francs CFA** : les montants collectés se saisissent en euros et l'équivalent en francs CFA s'affiche à côté (taux fixe : 1 € = 655,957 F CFA).
+- **Lieu et calendrier** : facultatifs. Ajouter `lieu` ou `calendrier` à un projet quand ils sont connus, ils s'afficheront automatiquement.
 - **Photos** : les déposer dans `assets/img/projets/`, puis indiquer leur chemin, par exemple
   `photos: { avant: ["assets/img/projets/puits-avant.jpg"], pendant: [], apres: [] }`.
   Les réduire avant de les envoyer (environ 1600 px de large, moins de 300 Ko) : beaucoup de visiteurs consultent le site sur mobile avec peu de données.

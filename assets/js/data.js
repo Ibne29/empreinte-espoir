@@ -5,7 +5,7 @@
  *  C'est le SEUL fichier à modifier pour mettre à jour le site :
  *  textes, projets, montants collectés, photos, contacts.
  *
- *  - Les montants sont en euros, sans espace : 370
+ *  - Les montants collectés sont en euros, sans espace : 370
  *    Le site affiche automatiquement l'équivalent en francs CFA
  *    (taux fixe : 1 € = 655,957 F CFA).
  *  - Les dates sont libres : "Janvier 2027", "Mars à juin 2027"...
@@ -14,9 +14,6 @@
  *  - Sans photo, une illustration aux couleurs du projet s'affiche.
  *
  *  ATTENTION : les futurs projets ci-dessous sont des EXEMPLES.
- *  Le budget de chaque projet est calculé tout seul à partir de
- *  son détail (detailBudget) et de la marge pour les imprévus
- *  (imprevus, en %). Ce détail n'est pas affiché sur le site.
  *  Tant que demo vaut true, un bandeau l'indique sur le site.
  * ============================================================
  */
@@ -96,9 +93,10 @@ window.SITE = {
   },
 
   // Domaines d'action : les 3 premiers flottent autour du logo, tous défilent dans le bandeau doré.
-  // Icônes disponibles : drop, bowl, health, home, book, heart, leaf, hands, eye, target
+  // Icônes disponibles : drop, tool, bowl, health, home, book, heart, leaf, hands, eye, target
   domaines: [
     { nom: "Eau potable", icone: "drop" },
+    { nom: "Rénovation des daaras", icone: "tool" },
     { nom: "Santé et hygiène", icone: "health" },
     { nom: "Couchage", icone: "home" },
     { nom: "Éducation", icone: "book" },
@@ -119,14 +117,6 @@ window.SITE = {
     { texte: "Seul on va plus vite, ensemble on va plus loin.", source: "Proverbe africain" },
   ],
 
-  zones: [
-    { nom: "Dakar", detail: "Enfants talibés" },
-    { nom: "Thiès", detail: "Enfants talibés" },
-    { nom: "Saint-Louis", detail: "Enfants talibés" },
-    { nom: "Région de Kaffrine", detail: "Eau potable, villages à préciser" },
-    { nom: "Région de Tambacounda", detail: "Eau potable, villages à préciser" },
-  ],
-
   equipe: [
     { nom: "Prénom Nom", role: "Président(e)" },
     { nom: "Prénom Nom", role: "Secrétaire général(e)" },
@@ -134,107 +124,69 @@ window.SITE = {
     { nom: "Prénom Nom", role: "Responsable des projets" },
   ],
 
-  // ---------- 2. FUTURS PROJETS (alimentent aussi la cagnotte) ----------
+  // ---------- 2. FUTURS PROJETS (affichés aussi dans la cagnotte) ----------
   // cause = "talibes" ou "eau" (sert aux filtres des pages Projets et Cagnotte)
   // unite = "enfants" par défaut, ou "habitants" pour un village
-  // detailBudget = calcul interne du budget en euros (non affiché sur le site)
-  // imprevus = marge en % ajoutée au total des lignes (le budget final est arrondi à la dizaine)
+  // lieu = facultatif, à ajouter quand il est connu : "Thiès"
   // calendrier = facultatif, à ajouter quand les dates sont fixées : [{ etape: "...", date: "Mars 2027" }]
   // collecte = montant déjà reçu pour ce projet (à mettre à jour à chaque don)
-  // Les budgets et les bénéficiaires des futurs projets s'affichent avec « environ » : ce sont des estimations.
   projetsFuturs: [
     {
-      id: "hygiene-soins",
+      id: "renovation-daara",
       cause: "talibes",
-      titre: "Savon, hygiène et soins",
-      lieu: "Thiès",
-      type: "Santé et hygiène",
+      titre: "Rénover un daara",
+      type: "Rénovation",
       beneficiaires: 50,
-      imprevus: 15,
-      detailBudget: [
-        { poste: "Kits d'hygiène : savon, brosse à dents, dentifrice, serviette, coupe-ongles (5 000 F CFA le kit)", montant: 385 },
-        { poste: "Savon pour trois mois : un savon par enfant et par semaine", montant: 325 },
-        { poste: "Médicaments contre la gale et pour les plaies", montant: 230 },
-        { poste: "Infirmier : trois passages au daara", montant: 115 },
-        { poste: "Bassines, seaux, bouilloires et poubelles", montant: 95 },
-        { poste: "Transport et suivi par un bénévole", montant: 65 },
-      ],
       collecte: 0,
       description:
-        "Un kit d'hygiène et du savon pour trois mois pour chaque enfant, et trois passages d'un infirmier pour soigner la gale et les plaies.",
+        "Réparer le toit, les murs et les toilettes d'un daara, et installer un point d'eau pour se laver, pour que les enfants vivent et apprennent dans un lieu propre et sûr.",
       image: "",
-      lienDon: "",
     },
     {
       id: "reparer-puits",
       cause: "eau",
       titre: "Réparer le puits d'un village",
-      lieu: "Région de Kaffrine",
       type: "Eau potable",
       beneficiaires: 200,
       unite: "habitants",
-      imprevus: 20,
-      detailBudget: [
-        { poste: "Puisatiers : 4 ouvriers pendant 15 jours à 7 500 F CFA par jour", montant: 690 },
-        { poste: "Location d'une motopompe pour vider et nettoyer le puits", montant: 95 },
-        { poste: "Ciment : 25 sacs à 4 000 F CFA", montant: 155 },
-        { poste: "Fer à béton, sable et gravier", montant: 215 },
-        { poste: "Margelle, dalle, couvercle métallique et poulie", montant: 230 },
-        { poste: "Transport des matériaux et de l'équipe", montant: 155 },
-        { poste: "Désinfection du puits et analyse de l'eau en laboratoire", montant: 95 },
-      ],
       collecte: 0,
       description:
         "Le puits du village est abîmé et ouvert. Des puisatiers le nettoient et le creusent plus profond, puis une margelle et un couvercle protègent l'eau.",
       image: "",
-      lienDon: "",
     },
     {
-      id: "moustiquaires-nattes",
+      id: "hygiene-soins",
       cause: "talibes",
-      titre: "Moustiquaires, nattes et couvertures",
-      lieu: "Saint-Louis",
-      type: "Couchage",
-      beneficiaires: 40,
-      imprevus: 15,
-      detailBudget: [
-        { poste: "Moustiquaires imprégnées : 40 à 4 500 F CFA", montant: 275 },
-        { poste: "Nattes : 20 à 5 000 F CFA (une pour deux enfants)", montant: 155 },
-        { poste: "Couvertures : 40 à 4 000 F CFA", montant: 245 },
-        { poste: "Cordes, crochets et installation", montant: 35 },
-        { poste: "Transport et suivi par un bénévole", montant: 65 },
-      ],
+      titre: "Savon, hygiène et soins",
+      type: "Santé et hygiène",
+      beneficiaires: 50,
       collecte: 0,
       description:
-        "Des moustiquaires et des nattes avant la saison des pluies, puis des couvertures avant les nuits fraîches.",
+        "Un kit d'hygiène et du savon pour chaque enfant, et le passage d'un infirmier pour soigner la gale et les plaies.",
       image: "",
-      lienDon: "",
     },
     {
       id: "construire-puits",
       cause: "eau",
       titre: "Construire un puits",
-      lieu: "Région de Tambacounda",
       type: "Eau potable",
       beneficiaires: 300,
       unite: "habitants",
-      imprevus: 20,
-      detailBudget: [
-        { poste: "Équipe de 5 puisatiers pendant 40 jours à 7 500 F CFA par jour", montant: 2290 },
-        { poste: "Ciment : 120 sacs à 4 000 F CFA pour les parois et la margelle", montant: 735 },
-        { poste: "Fer à béton", montant: 385 },
-        { poste: "Sable et gravier", montant: 305 },
-        { poste: "Location des moules et de l'outillage", montant: 230 },
-        { poste: "Margelle, couvercle, poulie, seaux et cordes", montant: 230 },
-        { poste: "Transport des matériaux et de l'équipe", montant: 385 },
-        { poste: "Analyse de l'eau en laboratoire", montant: 80 },
-        { poste: "Formation du comité d'entretien et caisse pour les réparations", montant: 95 },
-      ],
       collecte: 0,
       description:
-        "Un puits d'environ 25 mètres, creusé à la main avec des parois en béton, pour un village sans point d'eau proche. Un comité d'habitants est formé pour l'entretenir.",
+        "Un puits creusé à la main avec des parois en béton, pour un village sans point d'eau proche. Un comité d'habitants est formé pour l'entretenir.",
       image: "",
-      lienDon: "",
+    },
+    {
+      id: "moustiquaires-nattes",
+      cause: "talibes",
+      titre: "Moustiquaires, nattes et couvertures",
+      type: "Couchage",
+      beneficiaires: 40,
+      collecte: 0,
+      description:
+        "Des moustiquaires et des nattes avant la saison des pluies, puis des couvertures avant les nuits fraîches.",
+      image: "",
     },
   ],
 
@@ -246,7 +198,7 @@ window.SITE = {
   //   id: "reparer-puits",
   //   cause: "eau",
   //   titre: "Réparer le puits d'un village",
-  //   lieu: "Région de Kaffrine",
+  //   lieu: "Nom du village",
   //   type: "Eau potable",
   //   date: "Mai 2027",
   //   beneficiaires: 200,
@@ -254,8 +206,8 @@ window.SITE = {
   //   description: "Ce qui a été fait.",
   //   resultat: "Le résultat concret pour les habitants.",
   //   depenses: [
-  //     { poste: "Puisatiers", montant: 185 },
-  //     { poste: "Ciment, fer, sable et gravier", montant: 140 },
+  //     { poste: "Puisatiers", montant: 0 },
+  //     { poste: "Ciment, sable et gravier", montant: 0 },
   //   ],
   //   photos: {
   //     avant: ["assets/img/projets/puits-avant.jpg"],
