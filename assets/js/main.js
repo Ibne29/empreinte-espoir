@@ -149,7 +149,7 @@
     const c = S.contact;
     const contactItems = [
       c.email && `<li>${icon("mail")}<a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>`,
-      c.telephone && `<li>${icon("phone")}<a href="tel:${esc(c.telephone.replace(/\s/g, ""))}">${esc(c.telephone)}</a></li>`,
+      c.telephone && `<li>${icon("phone")}<a href="tel:${esc(c.telephone.replace(/\s/g, "").replace(/^0/, "+33"))}">${esc(c.telephone)}</a></li>`,
       c.adresse && `<li>${icon("pin")}<span>${esc(c.adresse)}</span></li>`,
     ].filter(Boolean).join("");
     const socials = [
@@ -390,6 +390,7 @@
     fill("[data-qui]", esc(S.presentation.quiSommesNous));
     fill("[data-mission]", esc(S.presentation.mission));
     fill("[data-organisation]", esc(S.presentation.organisation));
+    fill("[data-zones-texte]", esc(S.zonesTexte || ""));
     setupRotator();
 
     fill("[data-stats]", statItems([

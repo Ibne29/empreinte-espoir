@@ -634,3 +634,10 @@ button.thumb:hover img { transform: scale(1.06); }
   }
   [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* Où nous agissons */
+.zones-block { display: flex; flex-direction: column; gap: 20px; max-width: 860px; }
+@media (min-width: 720px) { .zones-block { flex-direction: row; align-items: flex-start; gap: 28px; } }
+.zones-icon { flex-shrink: 0; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--green-soft); color: var(--green); }
+.zones-icon .icon { width: 30px; height: 30px; }
+.zones-block p { margin: 0; font-size: 1.12rem; }

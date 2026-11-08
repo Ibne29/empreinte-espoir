@@ -34,7 +34,7 @@ window.SITE = {
 
   contact: {
     email: "contact@empreintedespoir.org",
-    telephone: "+221 00 000 00 00",
+    telephone: "07 53 19 88 66",
     whatsapp: "", // ex : "221770000000" (sans + ni espace)
     adresse: "Adresse du siège à compléter",
     facebook: "",
@@ -117,11 +117,17 @@ window.SITE = {
     { texte: "Seul on va plus vite, ensemble on va plus loin.", source: "Proverbe africain" },
   ],
 
+  // Où nous agissons (section de l'accueil)
+  zonesTexte:
+    "Partout au Sénégal, selon les besoins. Nos équipes de terrain mènent des enquêtes sur place pour déterminer les zones qui en ont vraiment besoin.",
+
   equipe: [
-    { nom: "Prénom Nom", role: "Président(e)" },
     { nom: "Prénom Nom", role: "Secrétaire général(e)" },
     { nom: "Prénom Nom", role: "Trésorier(ère)" },
-    { nom: "Prénom Nom", role: "Responsable des projets" },
+    { nom: "Prénom Nom", role: "Audit" },
+    { nom: "Prénom Nom", role: "Communication" },
+    { nom: "Prénom Nom", role: "Relations extérieures" },
+    { nom: "Prénom Nom", role: "Équipe terrain" },
   ],
 
   // ---------- 2. FUTURS PROJETS (affichés aussi dans la cagnotte) ----------
